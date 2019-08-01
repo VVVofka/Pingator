@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29102.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pingator", "Pingator\Pingator.csproj", "{FB37D80F-47EC-48AA-8DE8-AEF7AC006A4D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FB37D80F-47EC-48AA-8DE8-AEF7AC006A4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB37D80F-47EC-48AA-8DE8-AEF7AC006A4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB37D80F-47EC-48AA-8DE8-AEF7AC006A4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB37D80F-47EC-48AA-8DE8-AEF7AC006A4D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8E912F75-34DC-477E-87DF-B53C5D5217FE}
+	EndGlobalSection
+EndGlobal
