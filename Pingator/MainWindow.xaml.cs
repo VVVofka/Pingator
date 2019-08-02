@@ -28,7 +28,7 @@ namespace Pingator {
 
 		private void Btn1_Click(object sender, RoutedEventArgs e) {
 			//mv.Del();
-			Program.PingsSync();
+			ModelPingSync.PingsSync();
 			this.Close();
 		} // /////////////////////////////////////////////////////////////////////////////////
 	}

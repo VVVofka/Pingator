@@ -9,7 +9,7 @@ using System.ComponentModel;
 using System.Collections.ObjectModel;
 
 namespace Pingator {
-	class Program { //: INotifyPropertyChanged {
+	class ModelPingSync { //: INotifyPropertyChanged {
 					// данная коллекция будет содержать имена рабочих станций
 		private static ObservableCollection<string> hosts = new ObservableCollection<string>();
 		//public event PropertyChangedEventHandler PropertyChanged;
