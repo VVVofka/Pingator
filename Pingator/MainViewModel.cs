@@ -2,36 +2,41 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Shapes;
 
 namespace Pingator {
-	class MainViewModel{ // : INotifyPropertyChanged {
-		public string Adress { get; set; }
-		public ObservableCollection<Point> PointList { get; private set; }
-		public MainViewModel() {
-			PointList = new ObservableCollection<Point>();
-
-			// Some example data:
-			AddPoint(new Point(10, 10));
-			AddPoint(new Point(200, 200));
-			AddPoint(new Point(300, 300));
-		} // ///////////////////////////////////////////////////////////
-
-		//public event PropertyChangedEventHandler PropertyChanged;
-
-		public void AddPoint(Point p) {
-			// 3 at most, please!
-			PointList.Add(p);
-			if (PointList.Count == 3) {
-				PointList.RemoveAt(0);
+	class MainViewModel  : INotifyPropertyChanged {
+		private StatusIP changedIP;
+		public ObservableCollection<StatusIP> ListStatusIP {get; set;}
+		public StatusIP ChangedStatusIP {
+			get { return changedIP; }
+			set {
+				changedIP = value;
+				OnPropertyChanged("ChangedStatusIP");
 			}
+		}
+		public MainViewModel() {
+			ListStatusIP = new ObservableCollection<StatusIP>();
+
+			Add("192.168.1.1");
+			Add("192.168.1.208");
+			Add("192.168.1.108");
+			Add("192.168.2.208");
+			Add("google.com");
+		} // ///////////////////////////////////////////////////////////
+		public void Add(string ip) {
+			StatusIP st = new StatusIP();
+			st.IP = ip;
+			ListStatusIP.Add(st);
 		} // ///////////////////////////////////////////////////////////////////
-		public void Del() {
-			if (PointList.Count > 0)
-				PointList.RemoveAt(0);
-		} // ////////////////////////////////////////////////////////////////////////
-	}
+		public event PropertyChangedEventHandler PropertyChanged;
+		public void OnPropertyChanged([CallerMemberName]string prop = "") {
+			if (PropertyChanged != null)
+				PropertyChanged(this, new PropertyChangedEventArgs(prop));
+		} // /////////////////////////////////////////////////////////////////////
+	} // -------------------------------------------------------------------------
 }
