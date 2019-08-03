@@ -1,25 +1,23 @@
 ﻿using System.Net.NetworkInformation;
 
 namespace Pingator {
-	class ModelPingSyncSimple {
-		private string server;
+	class PingSimple {
+		private readonly string adress;
 		private Ping ping = new Ping();
-		private PingReply pingReply = null;
 		private IPStatus prevStatus;    // enum
-		public ModelPingSyncSimple(string server) {
-			this.server = server;
+		public PingSimple(string adress) {
+			this.adress = adress;
 		} // //////////////////////////////////////////////////////////////////////////////
-		public PingReply Reply {
-			get { return pingReply; }
-		} // /////////////////////////////////////////////////////////////////////////////
+		public PingReply Reply { get; private set; } = null;
+		// /////////////////////////////////////////////////////////////////////////////
 		public IPStatus Status {
-			get { return pingReply.Status; }
+			get { return Reply.Status; }
 		} // /////////////////////////////////////////////////////////////////////////////
 		public bool Check() {
-			bool first = (pingReply == null);
-			pingReply = ping.Send(server);
-			if (first || prevStatus != pingReply.Status) {
-				prevStatus = pingReply.Status;
+			bool first = (Reply == null);
+			Reply = ping.Send(adress);
+			if (first || prevStatus != Reply.Status) {
+				prevStatus = Reply.Status;
 				return true;
 			}
 			return false;

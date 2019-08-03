@@ -3,24 +3,31 @@ using System.Windows.Shapes;
 using System.Net.NetworkInformation;
 
 namespace Pingator {
-	class PingControl {
+	class PingControlAsync {
 		private Shape control;
-		private PingSimple ping;
-		public PingControl(string server, Shape control) {
+		private IPStatus prevStatus;    // enum
+		private bool first = true;
+		public readonly string Adress;
+		//private PingSimpleAsync ping;
+		public PingControlAsync(string adress, Shape control) {
 			this.control = control;
-			ping = new PingSimple(server);
+			Adress = adress;
+			//ping = new PingSimpleAsync(adress);
 		} // ///////////////////////////////////////////////////////////////////////////////////
-		//public PingReply Ping {
-		//	get { return ping.Reply; }
+//		public string Adress {
+	//		get { return ping.server; }
 		//} // /////////////////////////////////////////////////////////////////////////////
-		public void Check() {
-			if(ping.Check() == true) {
-				control.Fill = GetBrush();
+		public bool Check(PingReply reply) {
+			if (first || prevStatus != reply.Status) {
+				prevStatus = reply.Status;
+				control.Fill = GetBrush(reply);
+				return true;
 			}
+			return false;
 		} // ///////////////////////////////////////////////////////////////////////////////////
-		private Brush GetBrush() {
+		private Brush GetBrush(PingReply reply) {
 			Brush brush;
-			switch (ping.Status) {
+			switch (reply.Status) {
 				case IPStatus.Success:
 					brush = Brushes.Green;
 					break;
