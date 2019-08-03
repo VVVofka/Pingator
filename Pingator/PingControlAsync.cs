@@ -8,16 +8,13 @@ namespace Pingator {
 		private IPStatus prevStatus;    // enum
 		private bool first = true;
 		public readonly string Adress;
-		//private PingSimpleAsync ping;
+		public bool inwork = false;
 		public PingControlAsync(string adress, Shape control) {
 			this.control = control;
 			Adress = adress;
-			//ping = new PingSimpleAsync(adress);
 		} // ///////////////////////////////////////////////////////////////////////////////////
-//		public string Adress {
-	//		get { return ping.server; }
-		//} // /////////////////////////////////////////////////////////////////////////////
 		public bool Check(PingReply reply) {
+			inwork = false;
 			if (first || prevStatus != reply.Status) {
 				prevStatus = reply.Status;
 				control.Fill = GetBrush(reply);
@@ -30,6 +27,9 @@ namespace Pingator {
 			switch (reply.Status) {
 				case IPStatus.Success:
 					brush = Brushes.Green;
+					break;
+				case IPStatus.TimedOut:
+					brush = Brushes.Yellow;
 					break;
 				default:
 					brush = Brushes.Red;

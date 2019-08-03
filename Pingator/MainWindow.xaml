@@ -5,7 +5,63 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Pingator"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800" Closed="Window_Closed">
+
+    <Window.Resources>
+        <SolidColorBrush x:Key="greyStyle" Color="LightGray" />
+        <SolidColorBrush x:Key="greenLedStyle" Color="#FF40C800" />
+
+        <GeometryCollection x:Key="GeometryPC">
+            <RectangleGeometry Rect="-60,-37,120,60"  RadiusX="5" RadiusY="5" />
+            <RectangleGeometry Rect="-55,-32,110,50"  RadiusX="3" RadiusY="3" />
+            <RectangleGeometry Rect="-5,23,10,10" RadiusX="0" RadiusY="0" />
+            <RectangleGeometry Rect="-30,33,60,6" RadiusX="2" RadiusY="2" />
+        </GeometryCollection>
+        
+        <GeometryCollection x:Key="GeometryLEDs">
+            <RectangleGeometry Rect="-16,-1,3,3" />
+            <RectangleGeometry Rect="-10,-1,3,3" />
+            <RectangleGeometry Rect="-4,-1,3,3" />
+            <RectangleGeometry Rect="2,-1,3,3" />
+            <RectangleGeometry Rect="8,-1,3,3" />
+            <RectangleGeometry Rect="14,-1,3,3" />
+        </GeometryCollection>
+        
+        <GeometryCollection x:Key="GeometryRouter">
+            <RectangleGeometry Rect="-20,-5,40,10"  RadiusX="0" RadiusY="0" />
+            <RectangleGeometry Rect="-18,-3,36,6"  RadiusX="0" RadiusY="0" />
+            <RectangleGeometry Rect="-15,5,3,3" RadiusX="0" RadiusY="0" />
+            <RectangleGeometry Rect="12,5,3,3"  RadiusX="0" RadiusY="0" />
+            <RectangleGeometry Rect="-15,-24,3,20"  RadiusX="0" RadiusY="0" >
+                <RectangleGeometry.Transform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform AngleX="20"/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </RectangleGeometry.Transform>
+            </RectangleGeometry>
+            <RectangleGeometry Rect="12,-24,3,20"  RadiusX="0" RadiusY="0" >
+                <RectangleGeometry.Transform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform AngleX="-20"/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </RectangleGeometry.Transform>
+            </RectangleGeometry>
+        </GeometryCollection>
+        
+        <GeometryCollection x:Key="GeometrySwitcher">
+            <RectangleGeometry Rect="-20,-5,40,10"  RadiusX="0" RadiusY="0" />
+            <RectangleGeometry Rect="-18,-3,36,6"  RadiusX="0" RadiusY="0" />
+            <RectangleGeometry Rect="-15,5,3,3" RadiusX="0" RadiusY="0" />
+            <RectangleGeometry Rect="12,5,3,3"  RadiusX="0" RadiusY="0" />
+        </GeometryCollection>
+    </Window.Resources>
+
     <Grid ShowGridLines="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="0.05*"></RowDefinition>
@@ -33,86 +89,52 @@
             <Button x:Name="btn1" Content="Button" Canvas.Left="5" VerticalAlignment="Center" HorizontalAlignment="Center" Width="129" Click="Btn1_Click"/>
         </Canvas>
         <Canvas Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Path x:Name="rtSecr" Fill="LightGray" >
+            <Path x:Name="rtSecr" Fill="{StaticResource greyStyle}" >
                 <Path.Data >
-                    <GeometryGroup  FillRule="EvenOdd" >
-                        <RectangleGeometry Rect="-20,-5,40,10"  RadiusX="0" RadiusY="0" />
-                        <RectangleGeometry Rect="-18,-3,36,6"  RadiusX="0" RadiusY="0" />
-                        <RectangleGeometry Rect="-15,5,3,3" RadiusX="0" RadiusY="0" />
-                        <RectangleGeometry Rect="12,5,3,3"  RadiusX="0" RadiusY="0" />
-                        <RectangleGeometry Rect="-15,-24,3,20"  RadiusX="0" RadiusY="0" >
-                            <RectangleGeometry.Transform>
-                                <TransformGroup>
-                                    <ScaleTransform/>
-                                    <SkewTransform AngleX="20"/>
-                                    <RotateTransform/>
-                                    <TranslateTransform/>
-                                </TransformGroup>
-                            </RectangleGeometry.Transform>
-                        </RectangleGeometry>
-                        <RectangleGeometry Rect="12,-24,3,20"  RadiusX="0" RadiusY="0" >
-                            <RectangleGeometry.Transform>
-                                <TransformGroup>
-                                    <ScaleTransform/>
-                                    <SkewTransform AngleX="-20"/>
-                                    <RotateTransform/>
-                                    <TranslateTransform/>
-                                </TransformGroup>
-                            </RectangleGeometry.Transform>
-                        </RectangleGeometry>
-                    </GeometryGroup>
+                    <GeometryGroup  FillRule="EvenOdd" Children="{DynamicResource GeometryRouter}" />
                 </Path.Data>
             </Path>
-            <Rectangle Fill="#FF40C800" Canvas.Left="-16" Canvas.Top="-1" Width="3" Height="3"/>
-            <Rectangle Fill="#FF40C800" Canvas.Left="-10" Canvas.Top="-1" Width="3" Height="3"/>
-            <Rectangle Fill="#FF40C800" Canvas.Left="-4" Canvas.Top="-1" Width="3" Height="3"/>
-            <Rectangle Fill="#FF40C800" Canvas.Left="2" Canvas.Top="-1" Width="3" Height="3"/>
-            <Rectangle Fill="#FF40C800" Canvas.Left="8" Canvas.Top="-1" Width="3" Height="3"/>
-            <Rectangle Fill="#FF40C800" Canvas.Left="14" Canvas.Top="-1" Width="3" Height="3"/>
+            <Path Fill="{StaticResource greenLedStyle}" >
+                <Path.Data >
+                    <GeometryGroup  FillRule="EvenOdd" Children="{DynamicResource GeometryLEDs}" />
+                </Path.Data>
+            </Path>
         </Canvas>
         <Canvas Grid.Column="3" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Path x:Name="swSecr" Fill="LightGray" >
+            <Path x:Name="swSecr" Fill="{StaticResource greyStyle}" >
                 <Path.Data >
-                    <GeometryGroup  FillRule="EvenOdd" >
-                        <RectangleGeometry Rect="-20,-5,40,10"  RadiusX="0" RadiusY="0" />
-                        <RectangleGeometry Rect="-18,-3,36,6"  RadiusX="0" RadiusY="0" />
-                        <RectangleGeometry Rect="-15,5,3,3" RadiusX="0" RadiusY="0" />
-                        <RectangleGeometry Rect="12,5,3,3"  RadiusX="0" RadiusY="0" />
-                        
-                    </GeometryGroup>
+                    <GeometryGroup  FillRule="EvenOdd" Children="{DynamicResource GeometrySwitcher}" />
                 </Path.Data>
             </Path>
-            <Rectangle Fill="#FF40C800" Canvas.Left="-16" Canvas.Top="-1" Width="3" Height="3"/>
-            <Rectangle Fill="#FF40C800" Canvas.Left="-10" Canvas.Top="-1" Width="3" Height="3"/>
-            <Rectangle Fill="#FF40C800" Canvas.Left="-4" Canvas.Top="-1" Width="3" Height="3"/>
-            <Rectangle Fill="#FF40C800" Canvas.Left="2" Canvas.Top="-1" Width="3" Height="3"/>
-            <Rectangle Fill="#FF40C800" Canvas.Left="8" Canvas.Top="-1" Width="3" Height="3"/>
-            <Rectangle Fill="#FF40C800" Canvas.Left="14" Canvas.Top="-1" Width="3" Height="3"/>
+            <Path Fill="{StaticResource greenLedStyle}" >
+                <Path.Data >
+                    <GeometryGroup  FillRule="EvenOdd" Children="{DynamicResource GeometryLEDs}" />
+                </Path.Data>
+            </Path>
         </Canvas>
         <Canvas Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Path x:Name="pcSecr" Fill="LightGray" >
+            <Path x:Name="pcSecr" Fill="{StaticResource greyStyle}" >
                 <Path.Data >
-                    <GeometryGroup  FillRule="EvenOdd" >
-                        <RectangleGeometry Rect="-60,-37,120,60"  RadiusX="5" RadiusY="5" />
-                        <RectangleGeometry Rect="-55,-32,110,50"  RadiusX="3" RadiusY="3" />
-                        <RectangleGeometry Rect="-5,23,10,10" RadiusX="0" RadiusY="0" />
-                        <RectangleGeometry Rect="-30,33,60,6"  RadiusX="2" RadiusY="2" />
-                    </GeometryGroup>
+                    <GeometryGroup  FillRule="EvenOdd" Children="{DynamicResource GeometryPC}"/>
                 </Path.Data>
             </Path>
         </Canvas>
         <Canvas Grid.Column="3" Grid.Row="3"  VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Path x:Name="pcDirect" Fill="LightGray" >
+            <Path x:Name="pcDirect" Fill="{StaticResource greyStyle}" >
                 <Path.Data >
-                    <GeometryGroup  FillRule="EvenOdd" >
-                        <RectangleGeometry Rect="-60,-37,120,60"  RadiusX="5" RadiusY="5" />
-                        <RectangleGeometry Rect="-55,-32,110,50"  RadiusX="3" RadiusY="3" />
-                        <RectangleGeometry Rect="-5,23,10,10" RadiusX="0" RadiusY="0" />
-                        <RectangleGeometry Rect="-30,33,60,6"  RadiusX="2" RadiusY="2" />
-                    </GeometryGroup>
+                    <GeometryGroup  FillRule="EvenOdd" Children="{DynamicResource GeometryPC}"/>
                 </Path.Data>
             </Path>
         </Canvas>
+
+        <Canvas Grid.Column="1" Grid.Row="5" VerticalAlignment="Center" HorizontalAlignment="Center" >
+            <Path x:Name="pcResurs" Fill="{StaticResource greyStyle}">
+                <Path.Data>
+                    <GeometryGroup  FillRule="EvenOdd" Children="{DynamicResource GeometryPC}"/>
+                </Path.Data>
+            </Path>
+        </Canvas>
+
         <TextBox  Grid.Row="1" Grid.Column="1"  HorizontalAlignment="Left" Height="23" Margin="0,397,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
         <ItemsControl Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Path=PointList}">
             <ItemsControl.ItemsPanel>
