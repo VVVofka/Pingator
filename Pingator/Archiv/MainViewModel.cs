@@ -9,7 +9,7 @@ using System.Windows;
 using System.Windows.Shapes;
 
 namespace Pingator {
-	class MainViewModel  : INotifyPropertyChanged {
+	class MainViewModel{
 		private StatusIP changedIP;
 		public ObservableCollection<StatusIP> ListStatusIP {get; set;}
 		public StatusIP ChangedStatusIP {

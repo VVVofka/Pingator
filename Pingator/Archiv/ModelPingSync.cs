@@ -9,9 +9,22 @@ using System.ComponentModel;
 using System.Collections.ObjectModel;
 
 namespace Pingator {
-	class ModelPingSyncSimple { //: INotifyPropertyChanged {
+	class ModelPingSync { //: INotifyPropertyChanged {
+					// данная коллекция будет содержать имена рабочих станций
 		private static ObservableCollection<string> hosts = new ObservableCollection<string>();
 		//public event PropertyChangedEventHandler PropertyChanged;
+		public static void Run() {
+			// В переменную hosts записываем все рабочие станции из файла
+			hosts = getComputersListFromTxtFile("C:\\Temp\\computersList.txt");
+			// Создаём Action типизированный string, данный Action будет запускать функцию Pinger
+			Action<string> asyn = new Action<string>(Pinger);
+			// Для каждой рабочей станции запускаем Pinger'а
+			foreach (string s in hosts)
+				asyn.Invoke(s);
+			//hosts.ForEach(e => { asyn.Invoke(e);});
+			//Console.Read();
+		} // /////////////////////////////////////////////////////////////////////////////////////////////
+		  // Функция получения списка рабочих станций из файла
 		private static ObservableCollection<string> getComputersListFromTxtFile(string pathToFile) {
 			ObservableCollection<string> computersList = new ObservableCollection<string>();
 			using (StreamReader sr = new StreamReader(pathToFile, Encoding.Default)) {
@@ -22,6 +35,40 @@ namespace Pingator {
 				}
 			}
 			return computersList;
+		} // /////////////////////////////////////////////////////////////////////////////////////////////
+		  // Функция записи проблемных рабочих станций в файл
+		private static void writeProblemComputersToFile(string fullPathToFile, List<string> problemComputersList) {
+			using (StreamWriter sw = new StreamWriter(fullPathToFile, true, Encoding.Default)) {
+				problemComputersList.ForEach(e => { sw.WriteLine(e); });
+			}
+		} // /////////////////////////////////////////////////////////////////////////////////////////////
+		  // Проверяем доступна ли папка admin$
+		private static bool checkAdminShare(string computerName) {
+			if (Directory.Exists("\\\\" + computerName + "\\admin$")) {
+				return true;
+			} else {
+				return false;
+			}
+		} // /////////////////////////////////////////////////////////////////////////////////////////////
+		  // Наш основной класс, который будет отправлять команду ping
+		async private static void Pinger(string hostAdress) {
+			// Создаём экземпляр класса Ping
+			Ping png = new Ping();
+			try {
+				// Пингуем рабочую станцию hostAdress
+				PingReply pr = await png.SendPingAsync(hostAdress);
+				List<string> problemComputersList = new List<string>();
+				Console.WriteLine(string.Format("Status for {0} = {1}, ip-адрес: {2}", hostAdress, pr.Status, pr.Address));
+				// Если рабочая станция пингуется и папка admin$ недоступна,
+				// то такую машину заносим в список
+				//if (pr.Status == IPStatus.Success && !checkAdminShare(hostAdress)) {
+				//	problemComputersList.Add(hostAdress);
+				//}
+				// Записываем в файл все проблемные машины
+				writeProblemComputersToFile("C:\\Temp\\problemsWithAdminShare.txt", problemComputersList);
+			} catch {
+				Console.WriteLine("Возникла ошибка! " + hostAdress);
+			}
 		} // /////////////////////////////////////////////////////////////////////////////////////////////
 		public static void PingsSync() {
 			List<string> serversList = new List<string>();
