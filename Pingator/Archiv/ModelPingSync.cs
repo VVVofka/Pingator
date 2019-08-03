@@ -16,6 +16,7 @@ namespace Pingator {
 		public static void Run() {
 			// В переменную hosts записываем все рабочие станции из файла
 			hosts = getComputersListFromTxtFile("C:\\Temp\\computersList.txt");
+
 			// Создаём Action типизированный string, данный Action будет запускать функцию Pinger
 			Action<string> asyn = new Action<string>(Pinger);
 			// Для каждой рабочей станции запускаем Pinger'а

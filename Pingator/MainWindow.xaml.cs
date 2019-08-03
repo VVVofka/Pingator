@@ -25,8 +25,8 @@ namespace Pingator {
 			mv = new MainViewModel();
 			this.DataContext = mv;
 			//this.DataContext = new MainViewModel();
+			PingSimplInit();
 		} // //////////////////////////////////////////////////////////////////////////////
-
 		private void Btn1_Click(object sender, RoutedEventArgs e) {
 			//mv.Del();
 			//ModelPingSync.PingsSync();
@@ -35,7 +35,7 @@ namespace Pingator {
 				p.Check();
 			}
 		} // /////////////////////////////////////////////////////////////////////////////////
-		private void PingSimpl() {
+		private void PingSimplInit() {
 			pings.Add(new PingControl("192.168.1.1", rtSecr));
 			pings.Add(new PingControl("192.168.1.199", swSecr));
 			pings.Add(new PingControl("google.com", pcSecr));

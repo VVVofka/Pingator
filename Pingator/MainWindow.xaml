@@ -33,7 +33,7 @@
             <Button x:Name="btn1" Content="Button" Canvas.Left="5" VerticalAlignment="Center" HorizontalAlignment="Center" Width="129" Click="Btn1_Click"/>
         </Canvas>
         <Canvas Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Path x:Name="rtSecr" Fill="Red" >
+            <Path x:Name="rtSecr" Fill="LightGray" >
                 <Path.Data >
                     <GeometryGroup  FillRule="EvenOdd" >
                         <RectangleGeometry Rect="-20,-5,40,10"  RadiusX="0" RadiusY="0" />
@@ -71,7 +71,7 @@
             <Rectangle Fill="#FF40C800" Canvas.Left="14" Canvas.Top="-1" Width="3" Height="3"/>
         </Canvas>
         <Canvas Grid.Column="3" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Path x:Name="swSecr" Fill="Red" >
+            <Path x:Name="swSecr" Fill="LightGray" >
                 <Path.Data >
                     <GeometryGroup  FillRule="EvenOdd" >
                         <RectangleGeometry Rect="-20,-5,40,10"  RadiusX="0" RadiusY="0" />
@@ -90,7 +90,7 @@
             <Rectangle Fill="#FF40C800" Canvas.Left="14" Canvas.Top="-1" Width="3" Height="3"/>
         </Canvas>
         <Canvas Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Path x:Name="pcSecr" Fill="Green" >
+            <Path x:Name="pcSecr" Fill="LightGray" >
                 <Path.Data >
                     <GeometryGroup  FillRule="EvenOdd" >
                         <RectangleGeometry Rect="-60,-37,120,60"  RadiusX="5" RadiusY="5" />
@@ -102,7 +102,7 @@
             </Path>
         </Canvas>
         <Canvas Grid.Column="3" Grid.Row="3"  VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Path x:Name="pcDirect" Fill="Red" >
+            <Path x:Name="pcDirect" Fill="LightGray" >
                 <Path.Data >
                     <GeometryGroup  FillRule="EvenOdd" >
                         <RectangleGeometry Rect="-60,-37,120,60"  RadiusX="5" RadiusY="5" />
