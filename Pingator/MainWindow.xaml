@@ -88,18 +88,20 @@
         <Canvas Grid.Column="7" Grid.Row="7">
             <Button x:Name="btn1" Content="Button" Canvas.Left="5" VerticalAlignment="Center" HorizontalAlignment="Center" Width="129" Click="Btn1_Click"/>
         </Canvas>
+        
         <Canvas Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
             <Path x:Name="rtSecr" Fill="{StaticResource greyStyle}" >
                 <Path.Data >
-                    <GeometryGroup  FillRule="EvenOdd" Children="{DynamicResource GeometryRouter}" />
+                    <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometryRouter}" />
                 </Path.Data>
             </Path>
             <Path Fill="{StaticResource greenLedStyle}" >
                 <Path.Data >
-                    <GeometryGroup  FillRule="EvenOdd" Children="{DynamicResource GeometryLEDs}" />
+                    <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometryLEDs}" />
                 </Path.Data>
             </Path>
         </Canvas>
+        
         <Canvas Grid.Column="3" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
             <Path x:Name="swSecr" Fill="{StaticResource greyStyle}" >
                 <Path.Data >
@@ -112,6 +114,7 @@
                 </Path.Data>
             </Path>
         </Canvas>
+        
         <Canvas Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Center">
             <Path x:Name="pcSecr" Fill="{StaticResource greyStyle}" >
                 <Path.Data >
@@ -119,6 +122,7 @@
                 </Path.Data>
             </Path>
         </Canvas>
+        
         <Canvas Grid.Column="3" Grid.Row="3"  VerticalAlignment="Center" HorizontalAlignment="Center">
             <Path x:Name="pcDirect" Fill="{StaticResource greyStyle}" >
                 <Path.Data >
