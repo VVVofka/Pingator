@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
@@ -23,24 +24,20 @@ namespace Pingator {
 		private List<PingControl> pings = new List<PingControl>();
 		private List<PingControlAsync> pingas = new List<PingControlAsync>();
 		MainViewModel mv;
-		private static Timer aTimer;
 		public MainWindow() {
 			InitializeComponent();
 			mv = new MainViewModel();
 			this.DataContext = mv;
 			//this.DataContext = new MainViewModel();
 			PingSimplInit();
-			SetTimer();
 		} // //////////////////////////////////////////////////////////////////////////////
 		private void Btn1_Click(object sender, RoutedEventArgs e) {
-			Action<PingControlAsync> asyn = new Action<PingControlAsync>(Pinger);
 			// Для каждой рабочей станции запускаем Pinger'а
-
-			foreach (PingControlAsync s in pingas)
-				asyn.Invoke(s);
-			Console.WriteLine("complete");
-			//foreach (PingControl p in pings) 
-			//p.Check();
+			for (int i=0; i<3 ; i++) {
+				Cycle();
+				//Thread.Sleep(7000);
+				Console.WriteLine("complete");
+			}
 		} // /////////////////////////////////////////////////////////////////////////////////
 		private void PingSimplInit() {
 			pings.Add(new PingControl("192.168.1.1", rtSecr));
@@ -51,6 +48,7 @@ namespace Pingator {
 			pingas.Add(new PingControlAsync("192.168.1.199", swSecr));
 			pingas.Add(new PingControlAsync("google.com", pcSecr));
 			pingas.Add(new PingControlAsync("192.168.2.199", pcDirect));
+			pingas.Add(new PingControlAsync("192.168.1.198", pcResurs));
 		} // //////////////////////////////////////////////////////////////////////////////////
 		async private static void Pinger(PingControlAsync pgcntl) {
 			if (pgcntl.inwork)
@@ -67,21 +65,14 @@ namespace Pingator {
 				pgcntl.inwork = false;
 			}
 		} // /////////////////////////////////////////////////////////////////////////////////////////////
-		private static void SetTimer() {
-			// Create a timer with a two second interval.
-			aTimer = new Timer(6000);
-			// Hook up the Elapsed event for the timer. 
-			aTimer.Elapsed += OnTimedEvent;
-			aTimer.AutoReset = true;
-			aTimer.Enabled = true;
-		} // ///////////////////////////////////////////////////////////////////////////////////////////////
 		private static void OnTimedEvent(Object source, ElapsedEventArgs e) {
 			Console.WriteLine("The Elapsed event was raised at {0:HH:mm:ss.fff}",
 							  e.SignalTime);
 		} // ///////////////////////////////////////////////////////////////////////////////////////////////
-		private void Window_Closed(object sender, EventArgs e) {
-			aTimer.Stop();
-			aTimer.Dispose();
-		} // //////////////////////////////////////////////////////////////////////////////////////////////////
+		public void Cycle() {
+			Action<PingControlAsync> asyn = new Action<PingControlAsync>(Pinger);
+			foreach (PingControlAsync s in pingas)
+				asyn.Invoke(s);
+		} // ///////////////////////////////////////////////////////////////////////////////////////////////
 	} // -------------------------------------------------------------------------------------
 }
