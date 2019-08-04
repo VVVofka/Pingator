@@ -15,7 +15,7 @@ namespace Pingator {
 			tmr.Elapsed += OnTimedEvent;
 			tmr.AutoReset = true;
 			tmr.Enabled = true;
-			foreach (PingControlAsync p in s) 
+			foreach (PingControlAsync p in s)
 				alllist.Add(new TPT(p.Adress, p.control));
 		} // /////////////////////////////////////////////////////////////////////
 		private static void OnTimedEvent(Object source, ElapsedEventArgs e) {
@@ -30,11 +30,13 @@ namespace Pingator {
 		} // /////////////////////////////////////////////////////////////////////////////
 		private static void Cycle() {
 			Action<TPT> asyn = new Action<TPT>(Pinger);
-			int now = DateTime.Now.Millisecond;
+			long now = DateTime.Now.Ticks / 10000;
 			foreach (TPT tpt in alllist) {
-				int interval = now - tpt.Time;
-				if (interval >= Interval)
+				long interval = now - tpt.Time;
+				if (interval >= Interval) {
 					asyn.Invoke(tpt);
+					DoEvents();
+				}
 			}
 		} // ///////////////////////////////////////////////////////////////////////////////////////////////
 		async private static void Pinger(TPT tpt) {
@@ -50,8 +52,14 @@ namespace Pingator {
 				tpt.Time = 0;
 			}
 		} // /////////////////////////////////////////////////////////////////////////////////////////////
+		public static void Close() {
+			tmr.Stop();
+			tmr.Dispose();
+
+		} // ///////////////////////////////////////////////////////////////////////////////////
 		public static void DoEvents() {
-			Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
+			if (Application.Current != null)
+				Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
 		} // /////////////////////////////////////////////////////////////////////////////////////////
 	} // -----------------------------------------------------------------------------
 }

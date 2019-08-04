@@ -30,14 +30,11 @@ namespace Pingator {
 			this.DataContext = mv;
 			//this.DataContext = new MainViewModel();
 			PingSimplInit();
+			TimerPing.Init(7000, pingas);
 		} // //////////////////////////////////////////////////////////////////////////////
 		private void Btn1_Click(object sender, RoutedEventArgs e) {
-			// Для каждой рабочей станции запускаем Pinger'а
-			for (int i=0; i<3 ; i++) {
-				Cycle();
-				//Thread.Sleep(7000);
-				Console.WriteLine("complete");
-			}
+			//Thread.Sleep(7000);
+			Console.WriteLine("complete");
 		} // /////////////////////////////////////////////////////////////////////////////////
 		private void PingSimplInit() {
 			pings.Add(new PingControl("192.168.1.1", rtSecr));
@@ -50,29 +47,12 @@ namespace Pingator {
 			pingas.Add(new PingControlAsync("192.168.2.199", pcDirect));
 			pingas.Add(new PingControlAsync("192.168.1.198", pcResurs));
 		} // //////////////////////////////////////////////////////////////////////////////////
-		async private static void Pinger(PingControlAsync pgcntl) {
-			if (pgcntl.inwork)
-				return;
-			pgcntl.inwork = true;
-			Ping png = new Ping();
-			try {
-				PingReply pr = await png.SendPingAsync(pgcntl.Adress);
-				Console.WriteLine(string.Format("Status for {0} = {1}, ip-адрес: {2}", pgcntl.Adress, pr.Status, pr.Address));
-				pgcntl.Check(pr);
-				pgcntl.inwork = false;
-			} catch {
-				Console.WriteLine("Возникла ошибка! " + pgcntl.Adress);
-				pgcntl.inwork = false;
-			}
-		} // /////////////////////////////////////////////////////////////////////////////////////////////
-		private static void OnTimedEvent(Object source, ElapsedEventArgs e) {
-			Console.WriteLine("The Elapsed event was raised at {0:HH:mm:ss.fff}",
-							  e.SignalTime);
-		} // ///////////////////////////////////////////////////////////////////////////////////////////////
-		public void Cycle() { 
-			Action<PingControlAsync> asyn = new Action<PingControlAsync>(Pinger);
-			foreach (PingControlAsync s in pingas)
-				asyn.Invoke(s);
-		} // ///////////////////////////////////////////////////////////////////////////////////////////////
+		private void Window_Closed(object sender, EventArgs e) {
+			TimerPing.Close();
+			//this.RaiseEvent()
+			//Invalidate
+			RoutedEventArgs newEventArgs = new RoutedEventArgs(btn1.Drop);
+			RaiseEvent(newEventArgs);
+		} // /////////////////////////////////////////////////////////////////////////////////////////
 	} // -------------------------------------------------------------------------------------
 }

@@ -8,7 +8,7 @@ namespace Pingator {
 		public readonly int Interval = 1000;	// милисек.
 		public readonly string Adress;
 		public readonly Shape Control;
-		public int Time;
+		public long Time;
 		private IPStatus prevStatus;    // enum
 
 		public TPT(string adress, Shape control, int time = 0) {
@@ -20,6 +20,8 @@ namespace Pingator {
 			if (prevStatus != reply.Status) {
 				prevStatus = reply.Status;
 				Control.Fill = GetBrush(reply);
+				//Control.InvalidateVisual();
+				Control.UpdateLayout();
 			}
 		} // ///////////////////////////////////////////////////////////////////////////////////
 		private Brush GetBrush(PingReply reply) {
