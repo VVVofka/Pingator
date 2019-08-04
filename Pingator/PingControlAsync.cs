@@ -3,7 +3,7 @@ using System.Windows.Shapes;
 using System.Net.NetworkInformation;
 
 namespace Pingator {
-	class PingControlAsync {
+	public class PingControlAsync {
 		private Shape control;
 		private IPStatus prevStatus;    // enum
 		private bool first = true;

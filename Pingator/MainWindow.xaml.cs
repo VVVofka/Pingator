@@ -69,7 +69,7 @@ namespace Pingator {
 			Console.WriteLine("The Elapsed event was raised at {0:HH:mm:ss.fff}",
 							  e.SignalTime);
 		} // ///////////////////////////////////////////////////////////////////////////////////////////////
-		public void Cycle() {
+		public void Cycle() { 
 			Action<PingControlAsync> asyn = new Action<PingControlAsync>(Pinger);
 			foreach (PingControlAsync s in pingas)
 				asyn.Invoke(s);

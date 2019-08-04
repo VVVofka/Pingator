@@ -55,8 +55,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="PingControl.cs" />
+    <Compile Include="Archiv\PingControl.cs" />
     <Compile Include="Archiv\StatusIP.cs" />
+    <Compile Include="TimerPing.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -73,7 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PingControlAsync.cs" />
-    <Compile Include="PingSimple.cs" />
+    <Compile Include="Archiv\PingSimple.cs" />
     <Compile Include="Archiv\ModelPingSync.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

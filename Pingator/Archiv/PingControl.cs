@@ -10,9 +10,6 @@ namespace Pingator {
 			this.control = control;
 			ping = new PingSimple(server);
 		} // ///////////////////////////////////////////////////////////////////////////////////
-		//public PingReply Ping {
-		//	get { return ping.Reply; }
-		//} // /////////////////////////////////////////////////////////////////////////////
 		public void Check() {
 			if(ping.Check() == true) {
 				control.Fill = GetBrush();
