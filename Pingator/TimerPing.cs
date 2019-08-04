@@ -1,44 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Threading;
 
 namespace Pingator {
 	public static class TimerPing {
-		private static Timer tmr;
-		private static List<PingControlAsync> pingas;
+		public static readonly int Interval = 1000;
+		private static List<TPT> alllist = new List<TPT>();
+		private static Timer tmr = new Timer();
 		public static void Init(int msec, List<PingControlAsync> s) {
 			tmr = new Timer(msec);
 			tmr.Elapsed += OnTimedEvent;
 			tmr.AutoReset = true;
 			tmr.Enabled = true;
+			foreach (PingControlAsync p in s) 
+				alllist.Add(new TPT(p.Adress, p.control));
 		} // /////////////////////////////////////////////////////////////////////
 		private static void OnTimedEvent(Object source, ElapsedEventArgs e) {
+			/*
+			int now = DateTime.Now.Millisecond;
+			foreach (TPT p in alllist) {
+				int interval = now - p.Time;
+				if (interval >= Interval)
+					worklist.Add(p);
+			}*/
 			Cycle();
 		} // /////////////////////////////////////////////////////////////////////////////
 		private static void Cycle() {
-			Action<PingControlAsync> asyn = new Action<PingControlAsync>(Pinger);
-			foreach (PingControlAsync s in pingas)
-				asyn.Invoke(s);
+			Action<TPT> asyn = new Action<TPT>(Pinger);
+			int now = DateTime.Now.Millisecond;
+			foreach (TPT tpt in alllist) {
+				int interval = now - tpt.Time;
+				if (interval >= Interval)
+					asyn.Invoke(tpt);
+			}
 		} // ///////////////////////////////////////////////////////////////////////////////////////////////
-		async private static void Pinger(PingControlAsync pgcntl) {
-			if (pgcntl.inwork)
-				return;
-			pgcntl.inwork = true;
+		async private static void Pinger(TPT tpt) {
 			Ping png = new Ping();
 			try {
-				PingReply pr = await png.SendPingAsync(pgcntl.Adress);
-				Console.WriteLine(string.Format("Status for {0} = {1}, ip-адрес: {2}", pgcntl.Adress, pr.Status, pr.Address));
-				pgcntl.Check(pr);
-				pgcntl.inwork = false;
+				PingReply pr = await png.SendPingAsync(tpt.Adress);
+				Console.WriteLine(string.Format("Status for {0} = {1}, ip-адрес: {2}", tpt.Adress, pr.Status, pr.Address));
+				tpt.Check(pr);
+				tpt.Time = DateTime.Now.Millisecond;
+
 			} catch {
-				Console.WriteLine("Возникла ошибка! " + pgcntl.Adress);
-				pgcntl.inwork = false;
+				Console.WriteLine("Возникла ошибка! " + tpt.Adress);
+				tpt.Time = 0;
 			}
 		} // /////////////////////////////////////////////////////////////////////////////////////////////
 		public static void DoEvents() {

@@ -58,6 +58,7 @@
     <Compile Include="Archiv\PingControl.cs" />
     <Compile Include="Archiv\StatusIP.cs" />
     <Compile Include="TimerPing.cs" />
+    <Compile Include="TPT.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

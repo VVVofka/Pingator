@@ -1,26 +1,26 @@
-﻿using System.Windows.Media;
+﻿using System;
+using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Net.NetworkInformation;
 
 namespace Pingator {
-	public class PingControlAsync {
-		public readonly Shape control;
-		private IPStatus prevStatus;    // enum
-		private bool first = true;
+	class TPT {
+		public readonly int Interval = 1000;	// милисек.
 		public readonly string Adress;
-		public bool inwork = false;
-		public PingControlAsync(string adress, Shape control) {
-			this.control = control;
-			Adress = adress;
-		} // ///////////////////////////////////////////////////////////////////////////////////
-		public bool Check(PingReply reply) {
-			inwork = false;
-			if (first || prevStatus != reply.Status) {
+		public readonly Shape Control;
+		public int Time;
+		private IPStatus prevStatus;    // enum
+
+		public TPT(string adress, Shape control, int time = 0) {
+			this.Adress = adress;
+			this.Control = control;
+			this.Time = time;
+		} // ////////////////////////////////////////////////////////////
+		public void Check(PingReply reply) {
+			if (prevStatus != reply.Status) {
 				prevStatus = reply.Status;
-				control.Fill = GetBrush(reply);
-				return true;
+				Control.Fill = GetBrush(reply);
 			}
-			return false;
 		} // ///////////////////////////////////////////////////////////////////////////////////
 		private Brush GetBrush(PingReply reply) {
 			Brush brush;
