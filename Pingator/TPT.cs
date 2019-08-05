@@ -8,9 +8,11 @@ namespace Pingator {
 		public readonly int Interval = 1000;    // милисек.
 		public readonly string Adress;
 		public readonly Shape Control;
+		public Brush brush = Brushes.LightGray;
 		public long Time;
 		private IPStatus prevStatus;    // enum
 		private bool first = true;
+		public PingReply reply = null;
 
 		public TPT(string adress, Shape control, int time = 0) {
 			this.Adress = adress;

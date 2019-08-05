@@ -23,7 +23,7 @@ namespace Pingator {
 		private List<PingControl> pings = new List<PingControl>();
 		private List<PingControlAsync> pingas = new List<PingControlAsync>();
 		MainViewModel mv;
-		TimerPings tp = new TimerPings();
+		TimerPings tp;
 //		AutoResetEvent autoEvent = new AutoResetEvent(false);
 		int autoEvent = 0;
 		Timer stateTimer;
@@ -34,7 +34,7 @@ namespace Pingator {
 			//this.DataContext = new MainViewModel();
 			stateTimer = new Timer(func, autoEvent, 3000, 7000000);
 			PingSimplInit();
-			tp.Init(7000, pingas);
+			tp = new TimerPings(7000, pingas);
 		} // //////////////////////////////////////////////////////////////////////////////
 		public void func(Object i) {
 			Btn1_Click(btn1, null);
