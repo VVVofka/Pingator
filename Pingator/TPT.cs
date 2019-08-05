@@ -1,11 +1,10 @@
-﻿using System;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Net.NetworkInformation;
 
 namespace Pingator {
 	class TPT {
-		public readonly int Interval = 1000;	// милисек.
+		public readonly int Interval = 1000;    // милисек.
 		public readonly string Adress;
 		public readonly Shape Control;
 		public long Time;
@@ -19,10 +18,9 @@ namespace Pingator {
 		} // ////////////////////////////////////////////////////////////
 		public void Check(PingReply reply) {
 			if (first || prevStatus != reply.Status) {
+				first = false;
 				prevStatus = reply.Status;
 				Control.Fill = GetBrush(reply);
-				//Control.InvalidateVisual();
-				//Control.UpdateLayout();
 			}
 		} // ///////////////////////////////////////////////////////////////////////////////////
 		private Brush GetBrush(PingReply reply) {
