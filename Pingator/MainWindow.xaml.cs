@@ -23,7 +23,7 @@ namespace Pingator {
 		private List<PingControl> pings = new List<PingControl>();
 		private List<PingControlAsync> pingas = new List<PingControlAsync>();
 		MainViewModel mv;
-		TimerPing tp = new TimerPing();
+		TimerPings tp = new TimerPings();
 //		AutoResetEvent autoEvent = new AutoResetEvent(false);
 		int autoEvent = 0;
 		Timer stateTimer;

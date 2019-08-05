@@ -1,6 +1,7 @@
 ﻿using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Net.NetworkInformation;
+using System.Windows.Data;
 
 namespace Pingator {
 	class TPT {
@@ -15,6 +16,7 @@ namespace Pingator {
 			this.Adress = adress;
 			this.Control = control;
 			this.Time = time;
+
 		} // ////////////////////////////////////////////////////////////
 		public void Check(PingReply reply) {
 			if (first || prevStatus != reply.Status) {
