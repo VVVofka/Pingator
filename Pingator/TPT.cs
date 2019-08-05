@@ -10,6 +10,7 @@ namespace Pingator {
 		public readonly Shape Control;
 		public long Time;
 		private IPStatus prevStatus;    // enum
+		private bool first = true;
 
 		public TPT(string adress, Shape control, int time = 0) {
 			this.Adress = adress;
@@ -17,11 +18,11 @@ namespace Pingator {
 			this.Time = time;
 		} // ////////////////////////////////////////////////////////////
 		public void Check(PingReply reply) {
-			if (prevStatus != reply.Status) {
+			if (first || prevStatus != reply.Status) {
 				prevStatus = reply.Status;
 				Control.Fill = GetBrush(reply);
 				//Control.InvalidateVisual();
-				Control.UpdateLayout();
+				//Control.UpdateLayout();
 			}
 		} // ///////////////////////////////////////////////////////////////////////////////////
 		private Brush GetBrush(PingReply reply) {

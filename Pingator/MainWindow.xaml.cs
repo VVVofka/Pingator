@@ -5,7 +5,6 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -24,17 +23,26 @@ namespace Pingator {
 		private List<PingControl> pings = new List<PingControl>();
 		private List<PingControlAsync> pingas = new List<PingControlAsync>();
 		MainViewModel mv;
+		TimerPing tp = new TimerPing();
+//		AutoResetEvent autoEvent = new AutoResetEvent(false);
+		int autoEvent = 0;
+		Timer stateTimer;
 		public MainWindow() {
 			InitializeComponent();
 			mv = new MainViewModel();
 			this.DataContext = mv;
 			//this.DataContext = new MainViewModel();
+			stateTimer = new Timer(func, autoEvent, 3000, 7000000);
 			PingSimplInit();
-			TimerPing.Init(7000, pingas);
+			tp.Init(7000, pingas);
 		} // //////////////////////////////////////////////////////////////////////////////
+		public void func(Object i) {
+			Btn1_Click(btn1, null);
+		} // ///////////////////////////////////////////////////////////////////////////////
 		private void Btn1_Click(object sender, RoutedEventArgs e) {
 			//Thread.Sleep(7000);
 			Console.WriteLine("complete");
+			tp.Cycle();
 		} // /////////////////////////////////////////////////////////////////////////////////
 		private void PingSimplInit() {
 			pings.Add(new PingControl("192.168.1.1", rtSecr));
@@ -48,11 +56,8 @@ namespace Pingator {
 			pingas.Add(new PingControlAsync("192.168.1.198", pcResurs));
 		} // //////////////////////////////////////////////////////////////////////////////////
 		private void Window_Closed(object sender, EventArgs e) {
-			TimerPing.Close();
 			//this.RaiseEvent()
 			//Invalidate
-			RoutedEventArgs newEventArgs = new RoutedEventArgs(btn1.Drop);
-			RaiseEvent(newEventArgs);
 		} // /////////////////////////////////////////////////////////////////////////////////////////
 	} // -------------------------------------------------------------------------------------
 }
