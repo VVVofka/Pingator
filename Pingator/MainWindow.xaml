@@ -90,7 +90,7 @@
         </Canvas>
 
         <Canvas Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Path x:Name="rtSecr" Fill="{Binding Brush01, UpdateSourceTrigger=PropertyChanged}" >
+            <Path x:Name="rtSecr" Fill="{Binding Path=Brush01, UpdateSourceTrigger=PropertyChanged}" >
                 <Path.Data >
                     <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometryRouter}" />
                 </Path.Data>
@@ -138,26 +138,6 @@
                 </Path.Data>
             </Path>
         </Canvas>
-
-        <TextBox  Grid.Row="1" Grid.Column="1"  HorizontalAlignment="Left" Height="23" Margin="0,397,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <ItemsControl Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Path=PointList}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Canvas />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Rectangle Fill="Red" Width="25" Height="25" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-            <ItemsControl.ItemContainerStyle>
-                <Style>
-                    <Setter Property="Canvas.Left" Value="{Binding Path=X}" />
-                    <Setter Property="Canvas.Top" Value="{Binding Path=Y}" />
-                </Style>
-            </ItemsControl.ItemContainerStyle>
-        </ItemsControl>
 
     </Grid>
 </Window>

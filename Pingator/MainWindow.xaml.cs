@@ -33,10 +33,10 @@ namespace Pingator {
 		} // /////////////////////////////////////////////////////////////////////////////////
 		private void PingSimplInit() {
 			pingas.Add(new PingControlAsync("192.168.1.1", rtSecr));
-			pingas.Add(new PingControlAsync("192.168.1.199", swSecr));
+//			pingas.Add(new PingControlAsync("192.168.1.199", swSecr));
 			pingas.Add(new PingControlAsync("google.com", pcSecr));
-			pingas.Add(new PingControlAsync("192.168.2.199", pcDirect));
-			pingas.Add(new PingControlAsync("192.168.1.198", pcResurs));
+			//pingas.Add(new PingControlAsync("192.168.2.199", pcDirect));
+			//pingas.Add(new PingControlAsync("192.168.1.198", pcResurs));
 		} // //////////////////////////////////////////////////////////////////////////////////
 	} // -------------------------------------------------------------------------------------
 }

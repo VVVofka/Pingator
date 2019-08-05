@@ -23,19 +23,14 @@ namespace Pingator {
 			return false;
 		} // ///////////////////////////////////////////////////////////////////////////////////
 		private Brush GetBrush(PingReply reply) {
-			Brush brush;
 			switch (reply.Status) {
 				case IPStatus.Success:
-					brush = Brushes.Green;
-					break;
+					return Brushes.Green;
 				case IPStatus.TimedOut:
-					brush = Brushes.Yellow;
-					break;
+					return Brushes.Yellow;
 				default:
-					brush = Brushes.Red;
-					break;
+					return Brushes.Red;
 			}
-			return brush;
 		} // //////////////////////////////////////////////////////////////////////////////////
 	} // ----------------------------------------------------------------------------------------
 }

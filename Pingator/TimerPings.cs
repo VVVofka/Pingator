@@ -20,13 +20,29 @@ namespace Pingator {
 			Interval = msec * 10000;
 			foreach (PingControlAsync p in s)
 				alllist.Add(new TPT(p.Adress, p.control));
-			stateTimer = new Timer(CheckStatus, null, 1000, 1000);
+			stateTimer = new Timer(CheckStatus, null, 2000, 7000000);
 		} // /////////////////////////////////////////////////////////////////////
 		~TimerPings() {
 			stateTimer.Dispose();
 		} // //////////////////////////////////////////////////////////////////////
 		public void Cycle() {
-			Action<TPT> asyn = new Action<TPT>(Pinger);
+			int i = 1;
+			TPT tpt = alllist[i];
+			setBrush(tpt.brush, i);
+			if (tpt.reply == null) {
+				long interval = DateTime.Now.Ticks - tpt.Time;
+				if (interval > Interval) {
+					Pinger(tpt);
+				}
+			} else {
+				setBrush(tpt.brush, i);
+				tpt.reply = null;
+				tpt.Time = DateTime.Now.Ticks;
+			}
+
+		} // ///////////////////////////////////////////////////////////////////////////////////////////////
+		public void CycleA() {
+			Action<TPT> asyn = new Action<TPT>(PingerA);
 
 			for (int i = 0; i < alllist.Count; i++) {
 				TPT tpt = alllist[i];
@@ -42,13 +58,25 @@ namespace Pingator {
 				}
 			}
 		} // ///////////////////////////////////////////////////////////////////////////////////////////////
-		async private static void Pinger(TPT tpt) {
+		private void Pinger(TPT tpt) {
+			Ping png = new Ping();
+			//try {
+				tpt.reply = png.Send(tpt.Adress);
+				Console.WriteLine(string.Format("Status for {0} = {1}, ip-адрес: {2}", tpt.Adress, tpt.reply.Status, tpt.reply.Address));
+				tpt.Check();
+				tpt.Time = DateTime.Now.Ticks;
+			//} catch {
+				Console.WriteLine("Возникла ошибка! " + tpt.Adress);
+				tpt.Time = 0;
+			//}
+		} // /////////////////////////////////////////////////////////////////////////////////////////////
+		async private static void PingerA(TPT tpt) {
 			Ping png = new Ping();
 			try {
-				PingReply pr = await png.SendPingAsync(tpt.Adress);
-				Console.WriteLine(string.Format("Status for {0} = {1}, ip-адрес: {2}", tpt.Adress, pr.Status, pr.Address));
-				tpt.Check(pr);
-				tpt.Time = DateTime.Now.Millisecond;
+				tpt.reply = await png.SendPingAsync(tpt.Adress);
+				Console.WriteLine(string.Format("Status for {0} = {1}, ip-адрес: {2}", tpt.Adress, tpt.reply.Status, tpt.reply.Address));
+				tpt.Check();
+				tpt.Time = DateTime.Now.Ticks;
 			} catch {
 				Console.WriteLine("Возникла ошибка! " + tpt.Adress);
 				tpt.Time = 0;
@@ -71,6 +99,12 @@ namespace Pingator {
 				Brush00 = brush;
 			else if (i == (bnd++))
 				Brush01 = brush;
+			else if (i == (bnd++))
+				Brush02 = brush;
+			else if (i == (bnd++))
+				Brush03 = brush;
+			else if (i == (bnd++))
+				Brush04 = brush;
 		} // ///////////////////////////////////////////////////////////////////////////////////////////
 		public Brush Brush00 {
 			get { return alllist[0].brush; }

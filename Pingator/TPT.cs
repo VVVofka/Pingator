@@ -7,7 +7,7 @@ namespace Pingator {
 	class TPT {
 		public readonly int Interval = 1000;    // милисек.
 		public readonly string Adress;
-		public readonly Shape Control;
+		public Shape Control;
 		public Brush brush = Brushes.LightGray;
 		public long Time;
 		private IPStatus prevStatus;    // enum
@@ -20,14 +20,14 @@ namespace Pingator {
 			this.Time = time;
 
 		} // ////////////////////////////////////////////////////////////
-		public void Check(PingReply reply) {
+		public void Check() {
 			if (first || prevStatus != reply.Status) {
 				first = false;
 				prevStatus = reply.Status;
-				Control.Fill = GetBrush(reply);
+				Control.Fill = GetBrush();
 			}
 		} // ///////////////////////////////////////////////////////////////////////////////////
-		private Brush GetBrush(PingReply reply) {
+		private Brush GetBrush() {
 			Brush brush;
 			switch (reply.Status) {
 				case IPStatus.Success:
