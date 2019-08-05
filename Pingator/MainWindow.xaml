@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Pingator"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Closed="Window_Closed">
+        Title="MainWindow" Height="450" Width="800">
 
     <Window.Resources>
         <SolidColorBrush x:Key="greyStyle" Color="LightGray" />
@@ -90,7 +90,7 @@
         </Canvas>
 
         <Canvas Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Path x:Name="rtSecr" Fill="{StaticResource greyStyle}" >
+            <Path x:Name="rtSecr" Fill="{Binding Brush01, UpdateSourceTrigger=PropertyChanged}" >
                 <Path.Data >
                     <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometryRouter}" />
                 </Path.Data>
