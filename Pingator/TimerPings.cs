@@ -19,8 +19,8 @@ namespace Pingator {
 		public TimerPings(int msec, List<PingControlAsync> s) {
 			Interval = msec * 10000;
 			foreach (PingControlAsync p in s)
-				alllist.Add(new TPT(p.Adress, p.control));
-			stateTimer = new Timer(EventStateTimer, null, 2000, 7000000);
+				alllist.Add(new TPT(p.Adress));
+			stateTimer = new Timer(EventStateTimer, null, 2000, 6000);
 		} // /////////////////////////////////////////////////////////////////////
 		~TimerPings() {
 			stateTimer.Dispose();
@@ -28,58 +28,51 @@ namespace Pingator {
 		public void Cycle() {
 			int i = 1;
 			TPT tpt = alllist[i];
-			setBrush(tpt.brush, i);
-			if (tpt.reply == null) {
-				long interval = DateTime.Now.Ticks - tpt.Time;
-				if (interval > Interval) {
-					Pinger(tpt);
-				}
-			} else {
+			if (tpt.ReadyStartPing) {
+				Pinger(tpt);
+			} else if (tpt.FinishPing) {
 				setBrush(tpt.brush, i);
-				tpt.reply = null;
-				tpt.Time = DateTime.Now.Ticks;
 			}
-
 		} // ///////////////////////////////////////////////////////////////////////////////////////////////
 		public void CycleA() {
 			Action<TPT> asyn = new Action<TPT>(PingerA);
 
 			for (int i = 0; i < alllist.Count; i++) {
 				TPT tpt = alllist[i];
-				if (tpt.reply == null) {
-					long interval = DateTime.Now.Ticks - tpt.Time;
+				if (tpt.Reply == null) {
+					long interval = DateTime.Now.Ticks - 0; // tpt.Time;
 					if (interval > Interval) {
 						asyn.Invoke(tpt);
 					}
 				} else {
 					setBrush(tpt.brush, i);
-					tpt.reply = null;
-					tpt.Time = DateTime.Now.Ticks;
+					tpt.Reply = null;
+					//tpt.Time = DateTime.Now.Ticks;
 				}
 			}
 		} // ///////////////////////////////////////////////////////////////////////////////////////////////
 		private void Pinger(TPT tpt) {
 			Ping png = new Ping();
-			//try {
-				tpt.reply = png.Send(tpt.Adress);
-				Console.WriteLine(string.Format("Status for {0} = {1}, ip-адрес: {2}", tpt.Adress, tpt.reply.Status, tpt.reply.Address));
-				tpt.Check();
-				tpt.Time = DateTime.Now.Ticks;
-			//} catch {
+			try {
+				tpt.Reply = png.Send(tpt.Adress);
+				Console.WriteLine(string.Format("Status for {0} = {1}, ip-адрес: {2}", tpt.Adress, tpt.Reply.Status, tpt.Reply.Address));
+				//tpt.Check();
+				//tpt.Time = DateTime.Now.Ticks;
+			} catch {
 				Console.WriteLine("Возникла ошибка! " + tpt.Adress);
-				tpt.Time = 0;
-			//}
+				//tpt.Time = 0;
+			}
 		} // /////////////////////////////////////////////////////////////////////////////////////////////
 		async private static void PingerA(TPT tpt) {
 			Ping png = new Ping();
 			try {
-				tpt.reply = await png.SendPingAsync(tpt.Adress);
-				Console.WriteLine(string.Format("Status for {0} = {1}, ip-адрес: {2}", tpt.Adress, tpt.reply.Status, tpt.reply.Address));
-				tpt.Check();
-				tpt.Time = DateTime.Now.Ticks;
+				tpt.Reply = await png.SendPingAsync(tpt.Adress);
+				Console.WriteLine(string.Format("Status for {0} = {1}, ip-адрес: {2}", tpt.Adress, tpt.Reply.Status, tpt.Reply.Address));
+				//tpt.Check();
+				//tpt.Time = DateTime.Now.Ticks;
 			} catch {
 				Console.WriteLine("Возникла ошибка! " + tpt.Adress);
-				tpt.Time = 0;
+				//tpt.Time = 0;
 			}
 		} // /////////////////////////////////////////////////////////////////////////////////////////////
 		public static void DoEvents() {
