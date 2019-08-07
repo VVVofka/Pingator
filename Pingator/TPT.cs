@@ -19,14 +19,13 @@ namespace Pingator {
 			this.time = time;
 		} // ////////////////////////////////////////////////////////////
 		public override string ToString() {
+			string s = "`" + Adress + "` " + brush.ToString() + " prevStatus:" + prevStatus;
 			if (reply == null)
-				return Adress + " " + brush + " prevStatus:" + prevStatus + " replyStatus:null" +
-					" time:" + time + " finishping:" + finishping + " first:" + first;
+				s += " replyStatus:null";
 			else
-				return Adress + " " + brush + " prevStatus:" + prevStatus +
-					" replyStatus:" + reply == null ? "null" : reply.Status +
-					" time:" + time + " finishping:" + finishping + " first:" + first;
-
+				s += " replyStatus:" + reply.Status;
+			s += " time:" + time/10000000 + " finishping:" + finishping + " first:" + first;
+			return s;
 		} // //////////////////////////////////////////////////////////
 		public bool ReadyStartPing {
 			get {

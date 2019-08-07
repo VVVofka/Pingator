@@ -32,11 +32,13 @@ namespace Pingator {
 			bool ready = tpt.ReadyStartPing;
 			Console.WriteLine("Cycle(): After ReadyStartPing-> " + tpt.ToString());
 			if (ready) {
-				Console.WriteLine("Cycle()->tpt.ReadyStartPing=true(Pinger) " + tpt.ToString());
+				Console.WriteLine("Cycle()->tpt.ReadyStartPing=true(before Pinger) " + tpt.ToString());
 				Pinger(tpt);
+				Console.WriteLine("Cycle()->tpt.ReadyStartPing=true(after Pinger) " + tpt.ToString());
 			} else if (tpt.FinishPing) {
-				Console.WriteLine("Cycle()->tpt.FinishPing=true(Brush)" + tpt.ToString());
+				Console.WriteLine("Cycle()->tpt.FinishPing=true(before setBrush)" + tpt.ToString());
 				setBrush(tpt.brush, i);
+				Console.WriteLine("Cycle()->tpt.FinishPing=true(after setBrush)" + tpt.ToString());
 			} else {
 				Console.WriteLine("Cycle(): ELSE " + tpt.ToString());
 			}
@@ -62,7 +64,7 @@ namespace Pingator {
 			Ping png = new Ping();
 			//try {
 				tpt.Reply = png.Send(tpt.Adress);
-				Console.WriteLine(string.Format("Status for {0} = {1}, ip-адрес: {2}", tpt.Adress, tpt.Reply.Status, tpt.Reply.Address));
+				//Console.WriteLine("After Send-> " + tpt.ToString());
 				//tpt.Check();
 				//tpt.Time = DateTime.Now.Ticks;
 			//} catch {
@@ -74,7 +76,7 @@ namespace Pingator {
 			Ping png = new Ping();
 			//try {
 				tpt.Reply = await png.SendPingAsync(tpt.Adress);
-				Console.WriteLine(string.Format("Status for {0} = {1}, ip-адрес: {2}", tpt.Adress, tpt.Reply.Status, tpt.Reply.Address));
+				//Console.WriteLine(string.Format("Status for {0} = {1}, ip-адрес: {2}", tpt.Adress, tpt.Reply.Status, tpt.Reply.Address));
 				//tpt.Check();
 				//tpt.Time = DateTime.Now.Ticks;
 			//} catch {
