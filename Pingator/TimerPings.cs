@@ -10,17 +10,17 @@ using System.Windows.Threading;
 
 namespace Pingator {
 	public class TimerPings : INotifyPropertyChanged {
-		long Interval;
 		Timer stateTimer;
+		long Interval;
 		private static List<TPT> alllist = new List<TPT>();
-		public void CheckStatus(Object objtpt) {
+		public void EventStateTimer(Object objtpt) {
 			Cycle();
 		} // //////////////////////////////////////////////////////////////////////////////////////////
 		public TimerPings(int msec, List<PingControlAsync> s) {
 			Interval = msec * 10000;
 			foreach (PingControlAsync p in s)
 				alllist.Add(new TPT(p.Adress, p.control));
-			stateTimer = new Timer(CheckStatus, null, 2000, 7000000);
+			stateTimer = new Timer(EventStateTimer, null, 2000, 7000000);
 		} // /////////////////////////////////////////////////////////////////////
 		~TimerPings() {
 			stateTimer.Dispose();

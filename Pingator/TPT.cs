@@ -24,7 +24,7 @@ namespace Pingator {
 			if (first || prevStatus != reply.Status) {
 				first = false;
 				prevStatus = reply.Status;
-				Control.Fill = GetBrush();
+				//Control.Fill = GetBrush();
 			}
 		} // ///////////////////////////////////////////////////////////////////////////////////
 		private Brush GetBrush() {
