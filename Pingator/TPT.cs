@@ -34,8 +34,9 @@ namespace Pingator {
 			}
 			set {
 				finishping = value;
+				Console.WriteLine("Adress = {0}  finishping = {1}", Adress, value);
 			}
-		}
+		} // ////////////////////////////////////////////////////////////////////////////
 
 		/// <summary>
 		/// for static use
@@ -43,13 +44,20 @@ namespace Pingator {
 		public PingReply Reply {
 			set {
 				if (value == null) {
-					reply = null;
+					Console.WriteLine("Adress={0} prevStatus={1} reply.Status={2} newreplay=null",
+						Adress, prevStatus.ToString(), reply.Status.ToString());
+					//reply = null;
 					time = 0;
 					FinishPing = false;
 				} else if (first || prevStatus != reply.Status) {
+					Console.WriteLine("Adress={0} prevStatus={1} reply.Status={2}",
+						Adress, prevStatus.ToString(), value.Status.ToString());
+					if (reply == null)
+						prevStatus = IPStatus.Success;
+					else
+						prevStatus = reply.Status;
 					reply = value;
 					first = false;
-					prevStatus = reply.Status;
 					brush = GetBrush();
 					time = DateTime.Now.Ticks;
 					FinishPing = true;

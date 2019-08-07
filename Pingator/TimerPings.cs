@@ -20,7 +20,7 @@ namespace Pingator {
 			Interval = msec * 10000;
 			foreach (PingControlAsync p in s)
 				alllist.Add(new TPT(p.Adress));
-			stateTimer = new Timer(EventStateTimer, null, 2000, 6000);
+			stateTimer = new Timer(EventStateTimer, null, 1000, 9000);
 		} // /////////////////////////////////////////////////////////////////////
 		~TimerPings() {
 			stateTimer.Dispose();
@@ -28,10 +28,15 @@ namespace Pingator {
 		public void Cycle() {
 			int i = 1;
 			TPT tpt = alllist[i];
-			if (tpt.ReadyStartPing) {
+			bool ready = tpt.ReadyStartPing;
+			if (ready) {
+				Console.WriteLine("Cycle(): tpt.ReadyStartPing = true");
 				Pinger(tpt);
 			} else if (tpt.FinishPing) {
+				Console.WriteLine("Cycle(): tpt.FinishPing = true");
 				setBrush(tpt.brush, i);
+			} else {
+				Console.WriteLine("Cycle(): ELSE");
 			}
 		} // ///////////////////////////////////////////////////////////////////////////////////////////////
 		public void CycleA() {
@@ -46,34 +51,34 @@ namespace Pingator {
 					}
 				} else {
 					setBrush(tpt.brush, i);
-					tpt.Reply = null;
+					//tpt.Reply = null;
 					//tpt.Time = DateTime.Now.Ticks;
 				}
 			}
 		} // ///////////////////////////////////////////////////////////////////////////////////////////////
 		private void Pinger(TPT tpt) {
 			Ping png = new Ping();
-			try {
+			//try {
 				tpt.Reply = png.Send(tpt.Adress);
 				Console.WriteLine(string.Format("Status for {0} = {1}, ip-адрес: {2}", tpt.Adress, tpt.Reply.Status, tpt.Reply.Address));
 				//tpt.Check();
 				//tpt.Time = DateTime.Now.Ticks;
-			} catch {
-				Console.WriteLine("Возникла ошибка! " + tpt.Adress);
+			//} catch {
+				//Console.WriteLine("Возникла ошибка! " + tpt.Adress);
 				//tpt.Time = 0;
-			}
+			//}
 		} // /////////////////////////////////////////////////////////////////////////////////////////////
 		async private static void PingerA(TPT tpt) {
 			Ping png = new Ping();
-			try {
+			//try {
 				tpt.Reply = await png.SendPingAsync(tpt.Adress);
 				Console.WriteLine(string.Format("Status for {0} = {1}, ip-адрес: {2}", tpt.Adress, tpt.Reply.Status, tpt.Reply.Address));
 				//tpt.Check();
 				//tpt.Time = DateTime.Now.Ticks;
-			} catch {
-				Console.WriteLine("Возникла ошибка! " + tpt.Adress);
+			//} catch {
+				//Console.WriteLine("Возникла ошибка! " + tpt.Adress);
 				//tpt.Time = 0;
-			}
+			//}
 		} // /////////////////////////////////////////////////////////////////////////////////////////////
 		public static void DoEvents() {
 			if (Application.Current != null)
