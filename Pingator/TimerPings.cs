@@ -28,15 +28,17 @@ namespace Pingator {
 		public void Cycle() {
 			int i = 1;
 			TPT tpt = alllist[i];
+			Console.WriteLine("Cycle(): Before ReadyStartPing-> " + tpt.ToString());
 			bool ready = tpt.ReadyStartPing;
+			Console.WriteLine("Cycle(): After ReadyStartPing-> " + tpt.ToString());
 			if (ready) {
-				Console.WriteLine("Cycle(): tpt.ReadyStartPing = true");
+				Console.WriteLine("Cycle()->tpt.ReadyStartPing=true(Pinger) " + tpt.ToString());
 				Pinger(tpt);
 			} else if (tpt.FinishPing) {
-				Console.WriteLine("Cycle(): tpt.FinishPing = true");
+				Console.WriteLine("Cycle()->tpt.FinishPing=true(Brush)" + tpt.ToString());
 				setBrush(tpt.brush, i);
 			} else {
-				Console.WriteLine("Cycle(): ELSE");
+				Console.WriteLine("Cycle(): ELSE " + tpt.ToString());
 			}
 		} // ///////////////////////////////////////////////////////////////////////////////////////////////
 		public void CycleA() {

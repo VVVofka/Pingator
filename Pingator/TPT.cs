@@ -18,6 +18,16 @@ namespace Pingator {
 			this.Adress = Adress;
 			this.time = time;
 		} // ////////////////////////////////////////////////////////////
+		public override string ToString() {
+			if (reply == null)
+				return Adress + " " + brush + " prevStatus:" + prevStatus + " replyStatus:null" +
+					" time:" + time + " finishping:" + finishping + " first:" + first;
+			else
+				return Adress + " " + brush + " prevStatus:" + prevStatus +
+					" replyStatus:" + reply == null ? "null" : reply.Status +
+					" time:" + time + " finishping:" + finishping + " first:" + first;
+
+		} // //////////////////////////////////////////////////////////
 		public bool ReadyStartPing {
 			get {
 				long now = DateTime.Now.Ticks;
@@ -34,7 +44,7 @@ namespace Pingator {
 			}
 			set {
 				finishping = value;
-				Console.WriteLine("Adress = {0}  finishping = {1}", Adress, value);
+				Console.WriteLine("Adress={0}  finishping={1}", Adress, value);
 			}
 		} // ////////////////////////////////////////////////////////////////////////////
 
