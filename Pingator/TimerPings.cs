@@ -19,8 +19,8 @@ namespace Pingator {
 		public TimerPings(int msec, List<PingControlAsync> s) {
 			Interval = msec * 10000;
 			foreach (PingControlAsync p in s)
-				alllist.Add(new TPT(p.Adress));
-			stateTimer = new Timer(EventStateTimer, null, 1000, 9000);
+				alllist.Add(new TPT(p.Adress, 1000));
+			stateTimer = new Timer(EventStateTimer, null, 1000, 6000);
 		} // /////////////////////////////////////////////////////////////////////
 		~TimerPings() {
 			stateTimer.Dispose();
@@ -28,17 +28,17 @@ namespace Pingator {
 		public void Cycle() {
 			int i = 1;
 			TPT tpt = alllist[i];
-			Console.WriteLine("Cycle(): Before ReadyStartPing-> " + tpt.ToString());
-			bool ready = tpt.ReadyStartPing;
-			Console.WriteLine("Cycle(): After ReadyStartPing-> " + tpt.ToString());
+			bool ready = tpt.IsReadySendPing();
+			bool replaycompleted = tpt.IsReplayComplete();
+			Console.WriteLine("Cycle():ready=" + ready + " replaycompl=" + replaycompleted+"; tpt:" + tpt.ToString());
 			if (ready) {
-				Console.WriteLine("Cycle()->tpt.ReadyStartPing=true(before Pinger) " + tpt.ToString());
+				//Console.WriteLine("Cycle()->tpt.ReadyStartPing=true(before Pinger) " + tpt.ToString());
 				Pinger(tpt);
-				Console.WriteLine("Cycle()->tpt.ReadyStartPing=true(after Pinger) " + tpt.ToString());
-			} else if (tpt.FinishPing) {
-				Console.WriteLine("Cycle()->tpt.FinishPing=true(before setBrush)" + tpt.ToString());
-				setBrush(tpt.brush, i);
-				Console.WriteLine("Cycle()->tpt.FinishPing=true(after setBrush)" + tpt.ToString());
+				Console.WriteLine("Cycle()->after Pinger; " + tpt.ToString());
+			} else if (replaycompleted) {
+				//Console.WriteLine("Cycle()->tpt.FinishPing=true(before setBrush)" + tpt.ToString());
+				SaveReplay(tpt, i); // setBrush(tpt.brush, i) inside
+				Console.WriteLine("Cycle()->after setBrush; " + tpt.ToString());
 			} else {
 				Console.WriteLine("Cycle(): ELSE " + tpt.ToString());
 			}
@@ -63,25 +63,29 @@ namespace Pingator {
 		private void Pinger(TPT tpt) {
 			Ping png = new Ping();
 			//try {
-				tpt.Reply = png.Send(tpt.Adress);
-				//Console.WriteLine("After Send-> " + tpt.ToString());
-				//tpt.Check();
-				//tpt.Time = DateTime.Now.Ticks;
+			tpt.PrepareSendReplay();
+			tpt.Reply = png.Send(tpt.Adress);
+			tpt.AfterSendReplay();
+			//Console.WriteLine("After Send-> " + tpt.ToString());
+			//tpt.Check();
+			//tpt.Time = DateTime.Now.Ticks;
 			//} catch {
-				//Console.WriteLine("Возникла ошибка! " + tpt.Adress);
-				//tpt.Time = 0;
+			//Console.WriteLine("Возникла ошибка! " + tpt.Adress);
+			//tpt.Time = 0;
 			//}
 		} // /////////////////////////////////////////////////////////////////////////////////////////////
 		async private static void PingerA(TPT tpt) {
 			Ping png = new Ping();
 			//try {
-				tpt.Reply = await png.SendPingAsync(tpt.Adress);
-				//Console.WriteLine(string.Format("Status for {0} = {1}, ip-адрес: {2}", tpt.Adress, tpt.Reply.Status, tpt.Reply.Address));
-				//tpt.Check();
-				//tpt.Time = DateTime.Now.Ticks;
+			tpt.PrepareSendReplay();
+			tpt.Reply = await png.SendPingAsync(tpt.Adress);
+			tpt.AfterSendReplay();
+			//Console.WriteLine(string.Format("Status for {0} = {1}, ip-адрес: {2}", tpt.Adress, tpt.Reply.Status, tpt.Reply.Address));
+			//tpt.Check();
+			//tpt.Time = DateTime.Now.Ticks;
 			//} catch {
-				//Console.WriteLine("Возникла ошибка! " + tpt.Adress);
-				//tpt.Time = 0;
+			//Console.WriteLine("Возникла ошибка! " + tpt.Adress);
+			//tpt.Time = 0;
 			//}
 		} // /////////////////////////////////////////////////////////////////////////////////////////////
 		public static void DoEvents() {
@@ -94,7 +98,9 @@ namespace Pingator {
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(prop));
 		} // /////////////////////////////////////////////////////////////////////////////////////////
-
+		private void  SaveReplay(TPT tpt, int i) {
+			setBrush(tpt.brush, i);
+		} // /////////////////////////////////////////////////////////////////////////////////////////
 		private void setBrush(Brush brush, int i) {
 			int bnd = 0;
 			if (i == (bnd++))
