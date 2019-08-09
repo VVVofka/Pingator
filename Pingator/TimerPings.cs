@@ -21,11 +21,18 @@ namespace Pingator {
 			else
 				Cycle();
 		} // //////////////////////////////////////////////////////////////////////////////////////////
-		public TimerPings(int msec, List<PingControlAsync> s, bool is_async) {
-			foreach (PingControlAsync p in s)
-				alllist.Add(new TPT(p.Adress, msec / 2));
+		public TimerPings(int ping_time_out, int timer_interval, List<PingControlAsync> s, bool is_async) {
+			if (ping_time_out > timer_interval * 0.8) {
+				ping_time_out = (int)(0.5 + timer_interval * 0.8);
+				Console.WriteLine("ping_time_out > timer_interval*0.8");
+			}
+			int delay = (int)(0.5 + (timer_interval - ping_time_out) * 0.75);
+			if (delay < 0)
+				delay = 0;
+			foreach (PingControlAsync p in s) 
+				alllist.Add(new TPT(p.Adress, delay, ping_time_out));
 			SaveHeader(ProtocolFileName, "DateTime; Adress; Status; Delay");
-			stateTimer = new Timer(EventStateTimer, is_async, 100, 1000);
+			stateTimer = new Timer(EventStateTimer, is_async, 100, timer_interval);
 		} // /////////////////////////////////////////////////////////////////////
 		~TimerPings() {
 			stateTimer.Dispose();
@@ -90,7 +97,7 @@ namespace Pingator {
 			Ping png = new Ping();
 			try {
 				tpt.ready = TPT.Ready.WaitReplay;
-				tpt.Reply = png.Send(tpt.Adress, 1000);
+				tpt.Reply = png.Send(tpt.Adress, tpt.pingTimeOut);
 				tpt.ready = TPT.Ready.ReadReplay;
 			} catch {
 				Console.WriteLine("Возникла ошибка ping! " + tpt.Adress);
@@ -100,7 +107,7 @@ namespace Pingator {
 			Ping png = new Ping();
 			try {
 				tpt.ready = TPT.Ready.WaitReplay;
-				tpt.Reply = await png.SendPingAsync(tpt.Adress, 1000);
+				tpt.Reply = await png.SendPingAsync(tpt.Adress, tpt.pingTimeOut);
 				tpt.ready = TPT.Ready.ReadReplay;
 			} catch {
 				Console.WriteLine("Возникла ошибка aping! " + tpt.Adress);

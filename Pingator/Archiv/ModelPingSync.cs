@@ -71,7 +71,7 @@ namespace Pingator {
 		public static void PingsSync() {
 			List<string> serversList = new List<string>();
 			serversList.Add("www.microsoft.com");
-			serversList.Add("google.com");
+			serversList.Add("www.google.com");
 			serversList.Add("192.168.1.1");
 			serversList.Add("192.168.1.112");
 			serversList.Add("192.168.1.87");

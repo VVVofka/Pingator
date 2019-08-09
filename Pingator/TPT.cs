@@ -19,17 +19,20 @@ namespace Pingator {
 		private PingReply reply;
 		private PingReply prevreply;
 		private long time = 0;  // tick
-								//private bool isreply = false;
-		public TPT(string adress, int interval) {
+		public readonly int pingTimeOut; // for async send
+
+		private PingTimeSaver pingTimeSaver;
+		public TPT(string adress, int interval, int ping_time_out) {
 			this.Adress = adress;
 			this.Interval = interval;
+			pingTimeOut = ping_time_out;
+			pingTimeSaver = new PingTimeSaver(Adress);
 			brush = GetBrush();
 		} // ////////////////////////////////////////////////////////////
 		public void Init() {
 			reply = null;
 			brush = GetBrush();
 			SetTimer();
-//			Console.WriteLine("Init: " + ToString());
 		} // ///////////////////////////////////////////////////////////////
 		public void SetTimer() {
 			time = DateTime.Now.Ticks;
@@ -49,6 +52,8 @@ namespace Pingator {
 			set {
 				prevreply = reply;
 				reply = value;
+				if (value.Status == IPStatus.Success)
+					pingTimeSaver.Add(value.RoundtripTime);
 				if (ChangeStatus())
 					brush = GetBrush();
 			}

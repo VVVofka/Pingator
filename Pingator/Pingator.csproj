@@ -57,6 +57,7 @@
     </ApplicationDefinition>
     <Compile Include="Archiv\PingControl.cs" />
     <Compile Include="Archiv\StatusIP.cs" />
+    <Compile Include="PingTimeSaver.cs" />
     <Compile Include="TimerPings.cs" />
     <Compile Include="TPT.cs" />
     <Page Include="MainWindow.xaml">
