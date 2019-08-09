@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -11,22 +12,23 @@ using System.Windows.Threading;
 namespace Pingator {
 	public class TimerPings : INotifyPropertyChanged {
 		Timer stateTimer;
-		long Interval;
+		public string ProtocolFileName = @"protocol.csv";
 		private static List<TPT> alllist = new List<TPT>();
 		public void EventStateTimer(Object objtpt) {
-			Cycle();
+			bool isasync = (bool)objtpt;
+			if (isasync)
+				CycleA();
+			else
+				Cycle();
 		} // //////////////////////////////////////////////////////////////////////////////////////////
-		public TimerPings(int msec, List<PingControlAsync> s) {
-			Interval = msec * 10000;
+		public TimerPings(int msec, List<PingControlAsync> s, bool is_async) {
 			foreach (PingControlAsync p in s)
-				alllist.Add(new TPT(p.Adress, 1000));
-			stateTimer = new Timer(EventStateTimer, null, 1000, 1000);
+				alllist.Add(new TPT(p.Adress, msec / 2));
+			SaveHeader(ProtocolFileName, "DateTime; Adress; Status; Delay");
+			stateTimer = new Timer(EventStateTimer, is_async, 100, 1000);
 		} // /////////////////////////////////////////////////////////////////////
 		~TimerPings() {
 			stateTimer.Dispose();
-		} // //////////////////////////////////////////////////////////////////////
-		public TimerPings() {
-			//Brush01 = Brushes.Magenta;
 		} // //////////////////////////////////////////////////////////////////////
 		public void Cycle() {
 			for (int i = 0; i < alllist.Count; i++) {
@@ -36,18 +38,17 @@ namespace Pingator {
 						bool checktimer = tpt.CheckTimer();
 						if (checktimer) {
 							Pinger(tpt); // ready=WaitReplay; Reply=Send(Adress); ready=ReadReplay;
-							Console.WriteLine("Cycle()->after Pinger; " + tpt.ToString());
 						}
 						break;
 					case TPT.Ready.WaitReplay:
 						break;
 					case TPT.Ready.ReadReplay:
-						Console.WriteLine("Cycle() case:ReadReplay tpt:" + tpt.ToString());
-						SaveReplay(tpt, i); // setBrush(tpt.brush, i) inside
+						//Console.WriteLine("Cycle() case:ReadReplay tpt:" + tpt.ToString());
+						if (tpt.ChangeStatus())
+							SaveReplay(tpt);
 						if (tpt.ChangeStatus())
 							setBrush(tpt.brush, i);
 						tpt.SetTimer();
-						Console.WriteLine("Cycle()->after setBrush; " + tpt.ToString());
 						break;
 					case TPT.Ready.First:
 						tpt.Init();
@@ -58,48 +59,52 @@ namespace Pingator {
 		} // ///////////////////////////////////////////////////////////////////////////////////////////////
 		public void CycleA() {
 			Action<TPT> asyn = new Action<TPT>(PingerA);
-
 			for (int i = 0; i < alllist.Count; i++) {
 				TPT tpt = alllist[i];
-				if (tpt.Reply == null) {
-					long interval = DateTime.Now.Ticks - 0; // tpt.Time;
-					if (interval > Interval) {
-						asyn.Invoke(tpt);
-					}
-				} else {
-					setBrush(tpt.brush, i);
-					//tpt.Reply = null;
-					//tpt.Time = DateTime.Now.Ticks;
-				}
-			}
+				switch (tpt.ready) {
+					case TPT.Ready.WaitTimer:
+						bool checktimer = tpt.CheckTimer();
+						if (checktimer) {
+							asyn.Invoke(tpt); // ready=WaitReplay; Reply=Send(Adress); ready=ReadReplay;
+						}
+						break;
+					case TPT.Ready.WaitReplay:
+						break;
+					case TPT.Ready.ReadReplay:
+						//Console.WriteLine("Cycle() case:ReadReplay tpt:" + tpt.ToString());
+						if (tpt.ChangeStatus())
+							SaveReplay(tpt); // setBrush(tpt.brush, i) inside
+						if (tpt.ChangeStatus())
+							setBrush(tpt.brush, i);
+						tpt.SetTimer();
+						//Console.WriteLine("Cycle()->after setBrush; " + tpt.ToString());
+						break;
+					case TPT.Ready.First:
+						tpt.Init();
+						setBrush(tpt.brush, i);
+						break;
+				} // ----------- switch(tpt.ready) 
+			} // --------------for
 		} // ///////////////////////////////////////////////////////////////////////////////////////////////
 		private void Pinger(TPT tpt) {
 			Ping png = new Ping();
-			//try {
-			tpt.ready = TPT.Ready.WaitReplay;
-			tpt.Reply = png.Send(tpt.Adress);
-			tpt.ready = TPT.Ready.ReadReplay;
-			//Console.WriteLine("After Send-> " + tpt.ToString());
-			//tpt.Check();
-			//tpt.Time = DateTime.Now.Ticks;
-			//} catch {
-			//Console.WriteLine("Возникла ошибка! " + tpt.Adress);
-			//tpt.Time = 0;
-			//}
+			try {
+				tpt.ready = TPT.Ready.WaitReplay;
+				tpt.Reply = png.Send(tpt.Adress, 1000);
+				tpt.ready = TPT.Ready.ReadReplay;
+			} catch {
+				Console.WriteLine("Возникла ошибка ping! " + tpt.Adress);
+			}
 		} // /////////////////////////////////////////////////////////////////////////////////////////////
 		async private static void PingerA(TPT tpt) {
 			Ping png = new Ping();
-			//try {
-			tpt.ready = TPT.Ready.WaitReplay;
-			tpt.Reply = await png.SendPingAsync(tpt.Adress);
-			tpt.ready = TPT.Ready.ReadReplay;
-			//Console.WriteLine(string.Format("Status for {0} = {1}, ip-адрес: {2}", tpt.Adress, tpt.Reply.Status, tpt.Reply.Address));
-			//tpt.Check();
-			//tpt.Time = DateTime.Now.Ticks;
-			//} catch {
-			//Console.WriteLine("Возникла ошибка! " + tpt.Adress);
-			//tpt.Time = 0;
-			//}
+			try {
+				tpt.ready = TPT.Ready.WaitReplay;
+				tpt.Reply = await png.SendPingAsync(tpt.Adress, 1000);
+				tpt.ready = TPT.Ready.ReadReplay;
+			} catch {
+				Console.WriteLine("Возникла ошибка aping! " + tpt.Adress);
+			}
 		} // /////////////////////////////////////////////////////////////////////////////////////////////
 		public static void DoEvents() {
 			if (Application.Current != null)
@@ -111,23 +116,27 @@ namespace Pingator {
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(prop));
 		} // /////////////////////////////////////////////////////////////////////////////////////////
-		private void SaveReplay(TPT tpt, int i) {
-			// TODO
+		private void SaveReplay(TPT tpt) {
+			// save status
+			string s = String.Format("{0};{1};{2};{3}",
+				DateTime.Now.ToString("s").Replace('T', ' '),
+				tpt.Adress,
+				tpt.Reply.Status,
+				tpt.Reply.RoundtripTime);
+			//Console.WriteLine("~~" + s);
+			SaveLine(ProtocolFileName, s);
+
+			//save timeouts
+
 		} // /////////////////////////////////////////////////////////////////////////////////////////
 		private void setBrush(Brush brush, int i) {
 			int bnd = 0;
-			if (i == (bnd++))
-				Brush00 = brush;
-			else if (i == (bnd++))
-				Brush01 = brush;
-			else if (i == (bnd++))
-				Brush02 = brush;
-			else if (i == (bnd++))
-				Brush03 = brush;
-			else if (i == (bnd++))
-				Brush04 = brush;
-			else if (i == (bnd++))
-				Brush05 = brush;
+			if (i == (bnd++)) Brush00 = brush;
+			else if (i == (bnd++)) Brush01 = brush;
+			else if (i == (bnd++)) Brush02 = brush;
+			else if (i == (bnd++)) Brush03 = brush;
+			else if (i == (bnd++)) Brush04 = brush;
+			else if (i == (bnd++)) Brush05 = brush;
 		} // ///////////////////////////////////////////////////////////////////////////////////////////
 		public Brush Brush00 {
 			get { return alllist[0].brush; }
@@ -144,7 +153,9 @@ namespace Pingator {
 			}
 		} // /-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 		public Brush Brush02 {
-			get { return alllist[2].brush; }
+			get {
+				return alllist[2].brush;
+			}
 			set {
 				alllist[2].brush = value;
 				OnPropertyChanged("Brush02");
@@ -171,14 +182,21 @@ namespace Pingator {
 				OnPropertyChanged("Brush05");
 			}
 		} // /-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+		private void SaveHeader(string fname, string s) {
+			FileInfo fileInf = new FileInfo(ProtocolFileName);
+			if (!fileInf.Exists) {
+				SaveLine(fname, s, false);
+			}
+		} // ////////////////////////////////////////////////////////////////////////////////////////
+		private void SaveLine(string fname, string s, bool attach = true) {
+			try {
+				using (StreamWriter sw = new StreamWriter(fname, attach, System.Text.Encoding.Default)) {
+					sw.WriteLine(s);
+				}
+			} catch (Exception e) {
+				Console.WriteLine(e.Message);
+			}
+		} // //////////////////////////////////////////////////////////////////////////////////////
 	} // -----------------------------------------------------------------------------
 }
-/*
- void DoEvents()
-{ MSG msg;
-  while(PeekMessage(&msg, NULL, NULL, NULL, PM_REMOVE))
-	{ TranslateMessage(&msg);
-    DispatchMessage(&msg);
-  }
-}////////////////////////////////////////////////////////////////////////////////
- */
+

@@ -25,11 +25,10 @@ namespace Pingator {
 		public MainWindow() {
 			InitializeComponent();
 			PingSimplInit();
-			DataContext = new TimerPings(7000, pingas);
+			DataContext = new TimerPings(250, pingas, true);
 		} // //////////////////////////////////////////////////////////////////////////////
 		private void Btn1_Click(object sender, RoutedEventArgs e) {
 			//Thread.Sleep(7000);
-			Console.WriteLine("complete");
 		} // /////////////////////////////////////////////////////////////////////////////////
 		private void PingSimplInit() {
 			pingas.Add(new PingControlAsync("192.168.1.1", rtSecr));

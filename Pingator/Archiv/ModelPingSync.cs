@@ -115,7 +115,6 @@ namespace Pingator {
 					}
 				}
 			}
-			//Console.ReadKey();
 			//try {
 			//	IPHostEntry hostInfo = Dns.Resolve(server);
 			//} catch (Exception ee) {

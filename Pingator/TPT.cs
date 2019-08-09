@@ -29,7 +29,7 @@ namespace Pingator {
 			reply = null;
 			brush = GetBrush();
 			SetTimer();
-			Console.WriteLine("Init: " + ToString());
+//			Console.WriteLine("Init: " + ToString());
 		} // ///////////////////////////////////////////////////////////////
 		public void SetTimer() {
 			time = DateTime.Now.Ticks;
@@ -47,15 +47,10 @@ namespace Pingator {
 		  /// </summary>
 		public PingReply Reply {
 			set {
-				//if (reply == null || prevStatus != value.Status) {
-				//	Console.WriteLine("Adress={0} prevStatus={1} reply.Status={2}",
-				//		Adress, prevStatus.ToString(), value.Status.ToString());
-				//	prevStatus = value.Status;
 				prevreply = reply;
 				reply = value;
 				if (ChangeStatus())
 					brush = GetBrush();
-				//}
 			}
 			get { return reply; }
 		} // ///////////////////////////////////////////////////////////////////
@@ -73,11 +68,13 @@ namespace Pingator {
 				case IPStatus.Success:
 					return Brushes.Green;
 				case IPStatus.TimedOut:
-					return Brushes.Yellow;
+					return Brushes.Orange;
 				case IPStatus.DestinationHostUnreachable:
+					return Brushes.DarkGray;
 				case IPStatus.DestinationNetworkUnreachable:
 					return Brushes.Gray;
 				case IPStatus.DestinationPortUnreachable:
+					return Brushes.Silver;
 				case IPStatus.DestinationProtocolUnreachable:
 					return Brushes.LightGray;
 				default:
