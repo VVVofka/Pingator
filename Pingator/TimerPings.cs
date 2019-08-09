@@ -20,28 +20,41 @@ namespace Pingator {
 			Interval = msec * 10000;
 			foreach (PingControlAsync p in s)
 				alllist.Add(new TPT(p.Adress, 1000));
-			stateTimer = new Timer(EventStateTimer, null, 1000, 6000);
+			stateTimer = new Timer(EventStateTimer, null, 1000, 1000);
 		} // /////////////////////////////////////////////////////////////////////
 		~TimerPings() {
 			stateTimer.Dispose();
 		} // //////////////////////////////////////////////////////////////////////
+		public TimerPings() {
+			//Brush01 = Brushes.Magenta;
+		} // //////////////////////////////////////////////////////////////////////
 		public void Cycle() {
-			int i = 1;
-			TPT tpt = alllist[i];
-			bool ready = tpt.IsReadySendPing();
-			bool replaycompleted = tpt.IsReplayComplete();
-			Console.WriteLine("Cycle():ready=" + ready + " replaycompl=" + replaycompleted+"; tpt:" + tpt.ToString());
-			if (ready) {
-				//Console.WriteLine("Cycle()->tpt.ReadyStartPing=true(before Pinger) " + tpt.ToString());
-				Pinger(tpt);
-				Console.WriteLine("Cycle()->after Pinger; " + tpt.ToString());
-			} else if (replaycompleted) {
-				//Console.WriteLine("Cycle()->tpt.FinishPing=true(before setBrush)" + tpt.ToString());
-				SaveReplay(tpt, i); // setBrush(tpt.brush, i) inside
-				Console.WriteLine("Cycle()->after setBrush; " + tpt.ToString());
-			} else {
-				Console.WriteLine("Cycle(): ELSE " + tpt.ToString());
-			}
+			for (int i = 0; i < alllist.Count; i++) {
+				TPT tpt = alllist[i];
+				switch (tpt.ready) {
+					case TPT.Ready.WaitTimer:
+						bool checktimer = tpt.CheckTimer();
+						if (checktimer) {
+							Pinger(tpt); // ready=WaitReplay; Reply=Send(Adress); ready=ReadReplay;
+							Console.WriteLine("Cycle()->after Pinger; " + tpt.ToString());
+						}
+						break;
+					case TPT.Ready.WaitReplay:
+						break;
+					case TPT.Ready.ReadReplay:
+						Console.WriteLine("Cycle() case:ReadReplay tpt:" + tpt.ToString());
+						SaveReplay(tpt, i); // setBrush(tpt.brush, i) inside
+						if (tpt.ChangeStatus())
+							setBrush(tpt.brush, i);
+						tpt.SetTimer();
+						Console.WriteLine("Cycle()->after setBrush; " + tpt.ToString());
+						break;
+					case TPT.Ready.First:
+						tpt.Init();
+						setBrush(tpt.brush, i);
+						break;
+				} // ----------- switch(tpt.ready) 
+			} // --------------for
 		} // ///////////////////////////////////////////////////////////////////////////////////////////////
 		public void CycleA() {
 			Action<TPT> asyn = new Action<TPT>(PingerA);
@@ -63,9 +76,9 @@ namespace Pingator {
 		private void Pinger(TPT tpt) {
 			Ping png = new Ping();
 			//try {
-			tpt.PrepareSendReplay();
+			tpt.ready = TPT.Ready.WaitReplay;
 			tpt.Reply = png.Send(tpt.Adress);
-			tpt.AfterSendReplay();
+			tpt.ready = TPT.Ready.ReadReplay;
 			//Console.WriteLine("After Send-> " + tpt.ToString());
 			//tpt.Check();
 			//tpt.Time = DateTime.Now.Ticks;
@@ -77,9 +90,9 @@ namespace Pingator {
 		async private static void PingerA(TPT tpt) {
 			Ping png = new Ping();
 			//try {
-			tpt.PrepareSendReplay();
+			tpt.ready = TPT.Ready.WaitReplay;
 			tpt.Reply = await png.SendPingAsync(tpt.Adress);
-			tpt.AfterSendReplay();
+			tpt.ready = TPT.Ready.ReadReplay;
 			//Console.WriteLine(string.Format("Status for {0} = {1}, ip-адрес: {2}", tpt.Adress, tpt.Reply.Status, tpt.Reply.Address));
 			//tpt.Check();
 			//tpt.Time = DateTime.Now.Ticks;
@@ -98,8 +111,8 @@ namespace Pingator {
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(prop));
 		} // /////////////////////////////////////////////////////////////////////////////////////////
-		private void  SaveReplay(TPT tpt, int i) {
-			setBrush(tpt.brush, i);
+		private void SaveReplay(TPT tpt, int i) {
+			// TODO
 		} // /////////////////////////////////////////////////////////////////////////////////////////
 		private void setBrush(Brush brush, int i) {
 			int bnd = 0;
@@ -113,6 +126,8 @@ namespace Pingator {
 				Brush03 = brush;
 			else if (i == (bnd++))
 				Brush04 = brush;
+			else if (i == (bnd++))
+				Brush05 = brush;
 		} // ///////////////////////////////////////////////////////////////////////////////////////////
 		public Brush Brush00 {
 			get { return alllist[0].brush; }
@@ -147,6 +162,13 @@ namespace Pingator {
 			set {
 				alllist[4].brush = value;
 				OnPropertyChanged("Brush04");
+			}
+		} // /-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+		public Brush Brush05 {
+			get { return alllist[5].brush; }
+			set {
+				alllist[5].brush = value;
+				OnPropertyChanged("Brush05");
 			}
 		} // /-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 	} // -----------------------------------------------------------------------------

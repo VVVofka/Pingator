@@ -89,55 +89,54 @@
             <Button x:Name="btn1" Content="Button" Canvas.Left="5" VerticalAlignment="Center" HorizontalAlignment="Center" Width="129" Click="Btn1_Click"/>
         </Canvas>
 
-        <Canvas Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Path x:Name="rtSecr" Fill="{Binding Path=Brush01, UpdateSourceTrigger=PropertyChanged}" >
-                <Path.Data >
-                    <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometryRouter}" />
-                </Path.Data>
-            </Path>
-            <Path Fill="{StaticResource greenLedStyle}" >
-                <Path.Data >
-                    <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometryLEDs}" />
-                </Path.Data>
-            </Path>
-        </Canvas>
-
-        <Canvas Grid.Column="3" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Path x:Name="swSecr" Fill="{StaticResource greyStyle}" >
-                <Path.Data >
-                    <GeometryGroup  FillRule="EvenOdd" Children="{DynamicResource GeometrySwitcher}" />
-                </Path.Data>
-            </Path>
-            <Path Fill="{StaticResource greenLedStyle}" >
-                <Path.Data >
-                    <GeometryGroup  FillRule="EvenOdd" Children="{DynamicResource GeometryLEDs}" />
-                </Path.Data>
-            </Path>
-        </Canvas>
-
-        <Canvas Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Path x:Name="pcSecr" Fill="{StaticResource greyStyle}" >
-                <Path.Data >
-                    <GeometryGroup  FillRule="EvenOdd" Children="{DynamicResource GeometryPC}"/>
-                </Path.Data>
-            </Path>
-        </Canvas>
-
-        <Canvas Grid.Column="3" Grid.Row="3"  VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Path x:Name="pcDirect" Fill="{StaticResource greyStyle}" >
-                <Path.Data >
-                    <GeometryGroup  FillRule="EvenOdd" Children="{DynamicResource GeometryPC}"/>
-                </Path.Data>
-            </Path>
-        </Canvas>
-
-        <Canvas Grid.Column="1" Grid.Row="5" VerticalAlignment="Center" HorizontalAlignment="Center" >
-            <Path x:Name="pcResurs" Fill="{StaticResource greyStyle}">
+        <Canvas Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Path x:Name="rtSecr" Fill="{Binding Path=Brush00, UpdateSourceTrigger=PropertyChanged}">
                 <Path.Data>
-                    <GeometryGroup  FillRule="EvenOdd" Children="{DynamicResource GeometryPC}"/>
+                    <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometryRouter}"/>
+                </Path.Data>
+            </Path>
+            <Path Fill="{StaticResource greenLedStyle}">
+                <Path.Data>
+                    <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometryLEDs}"/>
                 </Path.Data>
             </Path>
         </Canvas>
 
+        <Canvas Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Path x:Name="swSecr" Fill="{Binding Path=Brush01, UpdateSourceTrigger=PropertyChanged}">
+                <Path.Data>
+                    <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometrySwitcher}"/>
+                </Path.Data>
+            </Path>
+            <Path Fill="{StaticResource greenLedStyle}">
+                <Path.Data>
+                    <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometryLEDs}"/>
+                </Path.Data>
+            </Path>
+        </Canvas>
+
+        <Canvas Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Path x:Name="pcSecr" Fill="{Binding Path=Brush02, UpdateSourceTrigger=PropertyChanged}">
+                <Path.Data>
+                    <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometryPC}"/>
+                </Path.Data>
+            </Path>
+        </Canvas>
+
+        <Canvas Grid.Row="3" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Path x:Name="pcDirect" Fill="{Binding Path=Brush03, UpdateSourceTrigger=PropertyChanged}">
+                <Path.Data>
+                    <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometryPC}"/>
+                </Path.Data>
+            </Path>
+        </Canvas>
+
+        <Canvas Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Path x:Name="pcResurs" Fill="{Binding Path=Brush04, UpdateSourceTrigger=PropertyChanged}">
+                <Path.Data>
+                    <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometryPC}"/>
+                </Path.Data>
+            </Path>
+        </Canvas>
     </Grid>
 </Window>
