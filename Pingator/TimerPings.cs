@@ -12,6 +12,14 @@ using System.Windows.Threading;
 
 namespace Pingator {
 	public class TimerPings : INotifyPropertyChanged {
+		private class AdressIndex {
+			public AdressIndex(string adress, int index) {
+				this.adress = adress;
+				this.index = index;
+			}
+			public string adress;
+			public int index;
+		}
 		Timer stateTimer;
 		public string ProtocolFileName = @"protocol.csv";
 		private static List<TPT> alllist = new List<TPT>();
@@ -41,14 +49,16 @@ namespace Pingator {
 				stateTimer.Dispose();
 		} // //////////////////////////////////////////////////////////////////////
 		public void Run() {
-			Task task1 = new Task(() => Factorial("192.168.1.122"));
+			Task task1 = new Task(() => Factorial(new AdressIndex("192.168.1.122", 3)));
 			task1.Start();
+			Task task2 = Task.Factory.StartNew(() => Factorial(new AdressIndex("192.168.1.123", 2)));
 		} // /////////////////////////////////////////////////////////////
-		void Factorial(string indata) {
+		void Factorial(AdressIndex indata) {
 			Ping png = new Ping();
 			for (int i = 0; i < 999999999; i++) {
-				PingReply reply = png.Send(indata, 1000);
-				Brush03 = TPT.GetBrush(reply);
+				PingReply reply = png.Send(indata.adress, 1000);
+				Brush brush = TPT.GetBrush(reply);
+				setBrush(brush, indata.index);
 			}
 		} // ////////////////////////////////////////////////////////////////////////
 
