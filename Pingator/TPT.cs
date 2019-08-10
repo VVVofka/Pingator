@@ -27,11 +27,11 @@ namespace Pingator {
 			this.Interval = interval;
 			pingTimeOut = ping_time_out;
 			pingTimeSaver = new PingTimeSaver(Adress);
-			brush = GetBrush();
+			brush = GetBrush(reply);
 		} // ////////////////////////////////////////////////////////////
 		public void Init() {
 			reply = null;
-			brush = GetBrush();
+			brush = GetBrush(reply);
 			SetTimer();
 		} // ///////////////////////////////////////////////////////////////
 		public void SetTimer() {
@@ -55,7 +55,7 @@ namespace Pingator {
 				if (value.Status == IPStatus.Success)
 					pingTimeSaver.Add(value.RoundtripTime);
 				if (ChangeStatus())
-					brush = GetBrush();
+					brush = GetBrush(reply);
 			}
 			get { return reply; }
 		} // ///////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ namespace Pingator {
 				return true;
 			return prevreply.Status != reply.Status;
 		} // ////////////////////////////////////////////////////////////////////
-		private Brush GetBrush() {
+		public static Brush GetBrush(PingReply reply) {
 			if (reply == null)
 				return Brushes.Magenta;
 			switch (reply.Status) {

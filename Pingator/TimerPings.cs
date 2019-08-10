@@ -5,6 +5,7 @@ using System.IO;
 using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -21,7 +22,7 @@ namespace Pingator {
 			else
 				Cycle();
 		} // //////////////////////////////////////////////////////////////////////////////////////////
-		public TimerPings(int ping_time_out, int timer_interval, List<PingControlAsync> s, bool is_async) {
+		public TimerPings(int ping_time_out, int timer_interval, List<ControlAdress> list, bool is_async) {
 			if (ping_time_out > timer_interval * 0.8) {
 				ping_time_out = (int)(0.5 + timer_interval * 0.8);
 				Console.WriteLine("ping_time_out > timer_interval*0.8");
@@ -29,14 +30,28 @@ namespace Pingator {
 			int delay = (int)(0.5 + (timer_interval - ping_time_out) * 0.75);
 			if (delay < 0)
 				delay = 0;
-			foreach (PingControlAsync p in s) 
+			foreach (ControlAdress p in list)
 				alllist.Add(new TPT(p.Adress, delay, ping_time_out));
 			SaveHeader(ProtocolFileName, "DateTime; Adress; Status; Delay");
-			stateTimer = new Timer(EventStateTimer, is_async, 100, timer_interval);
+			//stateTimer = new Timer(EventStateTimer, is_async, 100, timer_interval);
+			Run();
 		} // /////////////////////////////////////////////////////////////////////
 		~TimerPings() {
-			stateTimer.Dispose();
+			if (stateTimer != null)
+				stateTimer.Dispose();
 		} // //////////////////////////////////////////////////////////////////////
+		public void Run() {
+			Task task1 = new Task(() => Factorial("192.168.1.122"));
+			task1.Start();
+		} // /////////////////////////////////////////////////////////////
+		void Factorial(string indata) {
+			Ping png = new Ping();
+			for (int i = 0; i < 999999999; i++) {
+				PingReply reply = png.Send(indata, 1000);
+				Brush03 = TPT.GetBrush(reply);
+			}
+		} // ////////////////////////////////////////////////////////////////////////
+
 		public void Cycle() {
 			for (int i = 0; i < alllist.Count; i++) {
 				TPT tpt = alllist[i];
