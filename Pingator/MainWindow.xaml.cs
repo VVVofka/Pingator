@@ -20,23 +20,24 @@ namespace Pingator {
 	/// Логика взаимодействия для MainWindow.xaml
 	/// </summary>
 	public partial class MainWindow : Window {
-		private List<ControlAdress> pingas = new List<ControlAdress>();
+		private List<AdressIndex> pingas = new List<AdressIndex>();
 
 		public MainWindow() {
 			InitializeComponent();
 			PingSimplInit();
-			DataContext = new TimerPings(500, 3000, pingas, true);
+			DataContext = new TimerPings(pingas);
 		} // //////////////////////////////////////////////////////////////////////////////
 		private void Btn1_Click(object sender, RoutedEventArgs e) {
 			//Thread.Sleep(7000);
 		} // /////////////////////////////////////////////////////////////////////////////////
 		private void PingSimplInit() {
-			pingas.Add(new ControlAdress("192.168.1.1", rtSecr));
-			pingas.Add(new ControlAdress("google.com", swSecr));
-			pingas.Add(new ControlAdress("192.168.1.100", pcSecr));
-			pingas.Add(new ControlAdress("192.168.1.122", pcDirect));
-			pingas.Add(new ControlAdress("192.168.1.123", pcResurs));
-			pingas.Add(new ControlAdress("www.microsoft.com", Earth));
+			int index = 0;
+			pingas.Add(new AdressIndex("192.168.1.1", index++, 300, 1000));
+			pingas.Add(new AdressIndex("google.com", index++, 1000, 5000));
+			pingas.Add(new AdressIndex("192.168.1.100", index++, 300, 1000));
+			pingas.Add(new AdressIndex("192.168.1.122", index++, 300, 1000));
+			pingas.Add(new AdressIndex("192.168.1.123", index++, 300, 1000));
+			pingas.Add(new AdressIndex("www.microsoft.com", index++, 1100, 5100));
 		} // //////////////////////////////////////////////////////////////////////////////////
 	} // -------------------------------------------------------------------------------------
 }

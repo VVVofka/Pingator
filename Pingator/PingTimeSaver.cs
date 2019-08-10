@@ -9,7 +9,7 @@ namespace Pingator {
 		private int cnt = 0;
 		public PingTimeSaver(string adress) {
 			Fname = adress.Replace('.', '_') + @".csv";
-			SaveHeader(Fname, "DateTime;Ping");
+			SaveHeader(Fname, "DateTime;\tPing");
 			prevdt = DateTime.Now;
 		} // /////////////////////////////////////////////////////////////////
 		public void Add(long ms) {
@@ -23,7 +23,7 @@ namespace Pingator {
 					now.Year != prevdt.Year)
 					) {
 				long avg = sum / cnt;
-				string s = prevdt.ToString("yyyy-MM-dd hh:mm") + "\t" + avg.ToString();
+				string s = prevdt.ToString("yyyy-MM-dd hh:mm") + ";\t" + avg.ToString();
 				SaveLine(Fname, s);
 				cnt = 1;
 				sum = ms;

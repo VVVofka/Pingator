@@ -11,45 +11,20 @@ using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace Pingator {
-	public class TimerPings : INotifyPropertyChanged {
-		private class AdressIndex {
-			public string adress;
-			public int index;
-			public int timeout;
-			public int timecycle;
-			public AdressIndex(string adress, int index, int timeout, int timecycle) {
-				this.adress = adress;
-				this.index = index;
-				this.timeout = timeout;
-				this.timecycle = timecycle;
-			}
-		} // -------------------------------------------------------------------------------------
+	public partial class TimerPings : INotifyPropertyChanged {
 		public string ProtocolFileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"protocol.csv");
-		private static List<TPT> alllist = new List<TPT>();
-		public void EventStateTimer(Object objtpt) {
-			bool isasync = (bool)objtpt;
-			if (isasync)
-				CycleA();
-			else
-				Cycle();
-		} // //////////////////////////////////////////////////////////////////////////////////////////
-		public TimerPings(int ping_time_out, int timer_interval, List<ControlAdress> list, bool is_async) {
-			if (ping_time_out > timer_interval * 0.8) {
-				ping_time_out = (int)(0.5 + timer_interval * 0.8);
-				Console.WriteLine("ping_time_out > timer_interval*0.8");
-			}
-			int delay = (int)(0.5 + (timer_interval - ping_time_out) * 0.75);
-			if (delay < 0)
-				delay = 0;
-			foreach (ControlAdress p in list)
-				alllist.Add(new TPT(p.Adress, delay, ping_time_out));
+		List<AdressIndex> alllist;
+		public TimerPings(List<AdressIndex> list) {
 			SaveHeader(ProtocolFileName, "DateTime;\tAdress;\tStatus");
-			//stateTimer = new Timer(EventStateTimer, is_async, 100, timer_interval);
+			alllist = list;
 			Run();
 		} // /////////////////////////////////////////////////////////////////////
 		public void Run() {
-			Task task1 = Task.Factory.StartNew(() => TaskFunc(new AdressIndex("192.168.1.122", 3, 1000, 2000)));
-			Task task2 = Task.Factory.StartNew(() => TaskFunc(new AdressIndex("192.168.1.123", 2, 1000, 2000)));
+			List<Task> tasks = new List<Task>();
+			foreach (AdressIndex ai in alllist) {
+				setBrush(ai.brush, ai.index); // color for non initializing items (magenta)
+				tasks.Add(Task.Factory.StartNew(() => TaskFunc(ai))); // MAIN
+			}
 		} // /////////////////////////////////////////////////////////////
 		void TaskFunc(AdressIndex indata) {
 			Ping png = new Ping();
@@ -59,12 +34,13 @@ namespace Pingator {
 			while (true) {
 				long start = DateTime.Now.Ticks;
 				PingReply reply = png.Send(indata.adress, indata.timeout);
-				Brush brush = TPT.GetBrush(reply);
+				Brush brush = GetBrush(reply);
 				setBrush(brush, indata.index);
-				if (first || 
-						(prevStatus != reply.Status && 
-						(prevStatus == IPStatus.Success || reply.Status == IPStatus.Success)
-						)) {
+				if (first ||// (
+						//prevStatus != reply.Status &&
+						(prevStatus == IPStatus.Success ^ reply.Status == IPStatus.Success)
+					//)
+					) {
 					first = false;
 					SaveReplay(indata.adress, reply);
 					prevStatus = reply.Status;
@@ -72,87 +48,10 @@ namespace Pingator {
 				if (reply.Status == IPStatus.Success)
 					pingTimeSaver.Add(reply.RoundtripTime);
 				int timeInWork = (int)((DateTime.Now.Ticks - start) / 10000);
-				if(timeInWork < indata.timecycle) 
+				if (timeInWork < indata.timecycle)
 					Thread.Sleep(indata.timecycle - timeInWork);
 			}
 		} // ////////////////////////////////////////////////////////////////////////
-
-		public void Cycle() {
-			for (int i = 0; i < alllist.Count; i++) {
-				TPT tpt = alllist[i];
-				switch (tpt.ready) {
-					case TPT.Ready.WaitTimer:
-						bool checktimer = tpt.CheckTimer();
-						if (checktimer) {
-							Pinger(tpt); // ready=WaitReplay; Reply=Send(Adress); ready=ReadReplay;
-						}
-						break;
-					case TPT.Ready.WaitReplay:
-						break;
-					case TPT.Ready.ReadReplay:
-						//Console.WriteLine("Cycle() case:ReadReplay tpt:" + tpt.ToString());
-						if (tpt.ChangeStatus())
-							SaveReplay(tpt.Adress, tpt.Reply);
-						if (tpt.ChangeStatus())
-							setBrush(tpt.brush, i);
-						tpt.SetTimer();
-						break;
-					case TPT.Ready.First:
-						tpt.Init();
-						setBrush(tpt.brush, i);
-						break;
-				} // ----------- switch(tpt.ready) 
-			} // --------------for
-		} // ///////////////////////////////////////////////////////////////////////////////////////////////
-		public void CycleA() {
-			Action<TPT> asyn = new Action<TPT>(PingerA);
-			for (int i = 0; i < alllist.Count; i++) {
-				TPT tpt = alllist[i];
-				switch (tpt.ready) {
-					case TPT.Ready.WaitTimer:
-						bool checktimer = tpt.CheckTimer();
-						if (checktimer) {
-							asyn.Invoke(tpt); // ready=WaitReplay; Reply=Send(Adress); ready=ReadReplay;
-						}
-						break;
-					case TPT.Ready.WaitReplay:
-						break;
-					case TPT.Ready.ReadReplay:
-						//Console.WriteLine("Cycle() case:ReadReplay tpt:" + tpt.ToString());
-						if (tpt.ChangeStatus())
-							SaveReplay(tpt.Adress, tpt.Reply); // setBrush(tpt.brush, i) inside
-						if (tpt.ChangeStatus())
-							setBrush(tpt.brush, i);
-						tpt.SetTimer();
-						//Console.WriteLine("Cycle()->after setBrush; " + tpt.ToString());
-						break;
-					case TPT.Ready.First:
-						tpt.Init();
-						setBrush(tpt.brush, i);
-						break;
-				} // ----------- switch(tpt.ready) 
-			} // --------------for
-		} // ///////////////////////////////////////////////////////////////////////////////////////////////
-		private void Pinger(TPT tpt) {
-			Ping png = new Ping();
-			try {
-				tpt.ready = TPT.Ready.WaitReplay;
-				tpt.Reply = png.Send(tpt.Adress, tpt.pingTimeOut);
-				tpt.ready = TPT.Ready.ReadReplay;
-			} catch {
-				Console.WriteLine("Возникла ошибка ping! " + tpt.Adress);
-			}
-		} // /////////////////////////////////////////////////////////////////////////////////////////////
-		async private static void PingerA(TPT tpt) {
-			Ping png = new Ping();
-			try {
-				tpt.ready = TPT.Ready.WaitReplay;
-				tpt.Reply = await png.SendPingAsync(tpt.Adress, tpt.pingTimeOut);
-				tpt.ready = TPT.Ready.ReadReplay;
-			} catch {
-				Console.WriteLine("Возникла ошибка aping! " + tpt.Adress);
-			}
-		} // /////////////////////////////////////////////////////////////////////////////////////////////
 		public static void DoEvents() {
 			if (Application.Current != null)
 				Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
@@ -183,54 +82,31 @@ namespace Pingator {
 		} // ///////////////////////////////////////////////////////////////////////////////////////////
 		public Brush Brush00 {
 			get { return alllist[0].brush; }
-			set {
-				alllist[0].brush = value;
-				OnPropertyChanged("Brush00");
-			}
+			set { alllist[0].brush = value; OnPropertyChanged("Brush00"); }
 		} // /-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 		public Brush Brush01 {
 			get { return alllist[1].brush; }
-			set {
-				alllist[1].brush = value;
-				OnPropertyChanged("Brush01");
-			}
+			set { alllist[1].brush = value; OnPropertyChanged("Brush01"); }
 		} // /-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 		public Brush Brush02 {
-			get {
-				return alllist[2].brush;
-			}
-			set {
-				alllist[2].brush = value;
-				OnPropertyChanged("Brush02");
-			}
+			get { return alllist[2].brush; }
+			set { alllist[2].brush = value; OnPropertyChanged("Brush02"); }
 		} // /-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 		public Brush Brush03 {
 			get { return alllist[3].brush; }
-			set {
-				alllist[3].brush = value;
-				OnPropertyChanged("Brush03");
-			}
+			set { alllist[3].brush = value; OnPropertyChanged("Brush03"); }
 		} // /-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 		public Brush Brush04 {
 			get { return alllist[4].brush; }
-			set {
-				alllist[4].brush = value;
-				OnPropertyChanged("Brush04");
-			}
+			set { alllist[4].brush = value; OnPropertyChanged("Brush04"); }
 		} // /-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 		public Brush Brush05 {
 			get { return alllist[5].brush; }
-			set {
-				alllist[5].brush = value;
-				OnPropertyChanged("Brush05");
-			}
+			set { alllist[5].brush = value;  OnPropertyChanged("Brush05"); }
 		} // /-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 		public Brush Brush06 {
 			get { return alllist[6].brush; }
-			set {
-				alllist[6].brush = value;
-				OnPropertyChanged("Brush06");
-			}
+			set { alllist[6].brush = value; OnPropertyChanged("Brush06"); }
 		} // /-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 		private void SaveHeader(string fname, string s) {
 			FileInfo fileInf = new FileInfo(ProtocolFileName);
@@ -259,6 +135,26 @@ namespace Pingator {
 				mutex.ReleaseMutex();
 			}
 		} // //////////////////////////////////////////////////////////////////////////////////////
+		public static Brush GetBrush(PingReply reply) {
+			if (reply == null)
+				return Brushes.Magenta;
+			switch (reply.Status) {
+				case IPStatus.Success:
+					return Brushes.Green;
+				case IPStatus.TimedOut:
+					return Brushes.Orange;
+				case IPStatus.DestinationHostUnreachable:
+					return Brushes.DarkGray;
+				case IPStatus.DestinationNetworkUnreachable:
+					return Brushes.Gray;
+				case IPStatus.DestinationPortUnreachable:
+					return Brushes.Silver;
+				case IPStatus.DestinationProtocolUnreachable:
+					return Brushes.LightGray;
+				default:
+					return Brushes.Red;
+			}
+		} // //////////////////////////////////////////////////////////////////////////////////
 	} // -----------------------------------------------------------------------------
 }
 
