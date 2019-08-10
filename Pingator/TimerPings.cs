@@ -132,9 +132,6 @@ namespace Pingator {
 				tpt.Reply.RoundtripTime);
 			//Console.WriteLine("~~" + s);
 			SaveLine(ProtocolFileName, s);
-
-			//save timeouts
-
 		} // /////////////////////////////////////////////////////////////////////////////////////////
 		private void setBrush(Brush brush, int i) {
 			int bnd = 0;
@@ -187,6 +184,13 @@ namespace Pingator {
 			set {
 				alllist[5].brush = value;
 				OnPropertyChanged("Brush05");
+			}
+		} // /-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+		public Brush Brush06 {
+			get { return alllist[6].brush; }
+			set {
+				alllist[6].brush = value;
+				OnPropertyChanged("Brush06");
 			}
 		} // /-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 		private void SaveHeader(string fname, string s) {

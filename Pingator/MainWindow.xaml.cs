@@ -36,6 +36,7 @@ namespace Pingator {
 			pingas.Add(new PingControlAsync("192.168.1.100", pcSecr));
 			pingas.Add(new PingControlAsync("192.168.1.122", pcDirect));
 			pingas.Add(new PingControlAsync("192.168.1.123", pcResurs));
+			pingas.Add(new PingControlAsync("www.microsoft.com", Earth));
 		} // //////////////////////////////////////////////////////////////////////////////////
 	} // -------------------------------------------------------------------------------------
 }

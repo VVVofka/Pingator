@@ -60,6 +60,17 @@
             <RectangleGeometry Rect="-15,5,3,3" RadiusX="0" RadiusY="0" />
             <RectangleGeometry Rect="12,5,3,3"  RadiusX="0" RadiusY="0" />
         </GeometryCollection>
+
+        <GeometryCollection x:Key="GeometryEarth">
+            <EllipseGeometry Center="0,0" RadiusX="50" RadiusY="35" />
+            <EllipseGeometry Center="0,0" RadiusX="46" RadiusY="31" />
+        </GeometryCollection>
+
+        <GeometryCollection x:Key="GeometryEarthTst">
+            <EllipseGeometry Center="0,0" RadiusX="50" RadiusY="35" />
+
+            <EllipseGeometry Center="0,0" RadiusX="46" RadiusY="31" />
+        </GeometryCollection>
     </Window.Resources>
 
     <Grid ShowGridLines="True">
@@ -135,6 +146,13 @@
             <Path x:Name="pcResurs" Fill="{Binding Path=Brush04, UpdateSourceTrigger=PropertyChanged}">
                 <Path.Data>
                     <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometryPC}"/>
+                </Path.Data>
+            </Path>
+        </Canvas>
+        <Canvas Grid.Row="5" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Path x:Name="Earth" Fill="{Binding Path=Brush05, UpdateSourceTrigger=PropertyChanged}">
+                <Path.Data>
+                    <GeometryGroup FillRule="Nonzero" Children="{DynamicResource GeometryEarth}"/>
                 </Path.Data>
             </Path>
         </Canvas>

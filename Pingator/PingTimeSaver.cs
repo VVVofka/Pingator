@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Pingator {
 	class PingTimeSaver {
@@ -28,8 +24,8 @@ namespace Pingator {
 				long avg = sum / cnt;
 				string s = prevdt.ToString("s").Replace('T', ' ') + ";" + avg.ToString();
 				SaveLine(Fname, s);
-				cnt = 0;
-				sum = 0;
+				cnt = 1;
+				sum = ms;
 				prevdt = now;
 			} else {
 				cnt++;
