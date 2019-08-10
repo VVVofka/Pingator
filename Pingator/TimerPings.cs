@@ -13,15 +13,18 @@ using System.Windows.Threading;
 namespace Pingator {
 	public class TimerPings : INotifyPropertyChanged {
 		private class AdressIndex {
-			public AdressIndex(string adress, int index) {
-				this.adress = adress;
-				this.index = index;
-			}
 			public string adress;
 			public int index;
-		}
-		Timer stateTimer;
-		public string ProtocolFileName = @"protocol.csv";
+			public int timeout;
+			public int timecycle;
+			public AdressIndex(string adress, int index, int timeout, int timecycle) {
+				this.adress = adress;
+				this.index = index;
+				this.timeout = timeout;
+				this.timecycle = timecycle;
+			}
+		} // -------------------------------------------------------------------------------------
+		public string ProtocolFileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"protocol.csv");
 		private static List<TPT> alllist = new List<TPT>();
 		public void EventStateTimer(Object objtpt) {
 			bool isasync = (bool)objtpt;
@@ -40,25 +43,37 @@ namespace Pingator {
 				delay = 0;
 			foreach (ControlAdress p in list)
 				alllist.Add(new TPT(p.Adress, delay, ping_time_out));
-			SaveHeader(ProtocolFileName, "DateTime; Adress; Status; Delay");
+			SaveHeader(ProtocolFileName, "DateTime;\tAdress;\tStatus");
 			//stateTimer = new Timer(EventStateTimer, is_async, 100, timer_interval);
 			Run();
 		} // /////////////////////////////////////////////////////////////////////
-		~TimerPings() {
-			if (stateTimer != null)
-				stateTimer.Dispose();
-		} // //////////////////////////////////////////////////////////////////////
 		public void Run() {
-			Task task1 = new Task(() => Factorial(new AdressIndex("192.168.1.122", 3)));
-			task1.Start();
-			Task task2 = Task.Factory.StartNew(() => Factorial(new AdressIndex("192.168.1.123", 2)));
+			Task task1 = Task.Factory.StartNew(() => TaskFunc(new AdressIndex("192.168.1.122", 3, 1000, 2000)));
+			Task task2 = Task.Factory.StartNew(() => TaskFunc(new AdressIndex("192.168.1.123", 2, 1000, 2000)));
 		} // /////////////////////////////////////////////////////////////
-		void Factorial(AdressIndex indata) {
+		void TaskFunc(AdressIndex indata) {
 			Ping png = new Ping();
-			for (int i = 0; i < 999999999; i++) {
-				PingReply reply = png.Send(indata.adress, 1000);
+			bool first = true;
+			IPStatus prevStatus = IPStatus.Unknown;
+			PingTimeSaver pingTimeSaver = new PingTimeSaver(indata.adress);
+			while (true) {
+				long start = DateTime.Now.Ticks;
+				PingReply reply = png.Send(indata.adress, indata.timeout);
 				Brush brush = TPT.GetBrush(reply);
 				setBrush(brush, indata.index);
+				if (first || 
+						(prevStatus != reply.Status && 
+						(prevStatus == IPStatus.Success || reply.Status == IPStatus.Success)
+						)) {
+					first = false;
+					SaveReplay(indata.adress, reply);
+					prevStatus = reply.Status;
+				}
+				if (reply.Status == IPStatus.Success)
+					pingTimeSaver.Add(reply.RoundtripTime);
+				int timeInWork = (int)((DateTime.Now.Ticks - start) / 10000);
+				if(timeInWork < indata.timecycle) 
+					Thread.Sleep(indata.timecycle - timeInWork);
 			}
 		} // ////////////////////////////////////////////////////////////////////////
 
@@ -77,7 +92,7 @@ namespace Pingator {
 					case TPT.Ready.ReadReplay:
 						//Console.WriteLine("Cycle() case:ReadReplay tpt:" + tpt.ToString());
 						if (tpt.ChangeStatus())
-							SaveReplay(tpt);
+							SaveReplay(tpt.Adress, tpt.Reply);
 						if (tpt.ChangeStatus())
 							setBrush(tpt.brush, i);
 						tpt.SetTimer();
@@ -105,7 +120,7 @@ namespace Pingator {
 					case TPT.Ready.ReadReplay:
 						//Console.WriteLine("Cycle() case:ReadReplay tpt:" + tpt.ToString());
 						if (tpt.ChangeStatus())
-							SaveReplay(tpt); // setBrush(tpt.brush, i) inside
+							SaveReplay(tpt.Adress, tpt.Reply); // setBrush(tpt.brush, i) inside
 						if (tpt.ChangeStatus())
 							setBrush(tpt.brush, i);
 						tpt.SetTimer();
@@ -148,15 +163,14 @@ namespace Pingator {
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(prop));
 		} // /////////////////////////////////////////////////////////////////////////////////////////
-		private void SaveReplay(TPT tpt) {
+		private void SaveReplay(string adress, PingReply reply) {
 			// save status
-			string s = String.Format("{0};{1};{2};{3}",
+			string s = String.Format("{0};\t{1};\t{2}",
 				DateTime.Now.ToString("s").Replace('T', ' '),
-				tpt.Adress,
-				tpt.Reply.Status,
-				tpt.Reply.RoundtripTime);
+				adress,
+				reply.Status);
 			//Console.WriteLine("~~" + s);
-			SaveLine(ProtocolFileName, s);
+			SaveLineM(ProtocolFileName, s);
 		} // /////////////////////////////////////////////////////////////////////////////////////////
 		private void setBrush(Brush brush, int i) {
 			int bnd = 0;
@@ -231,6 +245,18 @@ namespace Pingator {
 				}
 			} catch (Exception e) {
 				Console.WriteLine(e.Message);
+			}
+		} // //////////////////////////////////////////////////////////////////////////////////////
+		private void SaveLineM(string fname, string s) {
+			using (var mutex = new Mutex(false, "UNIQUE_NAME")) {
+				mutex.WaitOne();
+				using (var aFile = new FileStream(fname, FileMode.Append, FileAccess.Write, FileShare.Write))
+				using (StreamWriter writer = new StreamWriter(aFile)) {
+					writer.WriteLine(s);
+					writer.Flush();
+					writer.BaseStream.Flush();
+				}
+				mutex.ReleaseMutex();
 			}
 		} // //////////////////////////////////////////////////////////////////////////////////////
 	} // -----------------------------------------------------------------------------
