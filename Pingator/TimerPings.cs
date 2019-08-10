@@ -17,15 +17,13 @@ namespace Pingator {
 		public TimerPings(List<AdressIndex> list) {
 			SaveHeader(ProtocolFileName, "DateTime;\tAdress;\tStatus");
 			alllist = list;
-			Run();
-		} // /////////////////////////////////////////////////////////////////////
-		public void Run() {
+
 			List<Task> tasks = new List<Task>();
 			foreach (AdressIndex ai in alllist) {
 				setBrush(ai.brush, ai.index); // color for non initializing items (magenta)
 				tasks.Add(Task.Factory.StartNew(() => TaskFunc(ai))); // MAIN
 			}
-		} // /////////////////////////////////////////////////////////////
+		} // /////////////////////////////////////////////////////////////////////
 		void TaskFunc(AdressIndex indata) {
 			Ping png = new Ping();
 			bool first = true;
@@ -36,11 +34,8 @@ namespace Pingator {
 				PingReply reply = png.Send(indata.adress, indata.timeout);
 				Brush brush = GetBrush(reply);
 				setBrush(brush, indata.index);
-				if (first ||// (
-						//prevStatus != reply.Status &&
-						(prevStatus == IPStatus.Success ^ reply.Status == IPStatus.Success)
-					//)
-					) {
+				if (first || (prevStatus == IPStatus.Success ^
+								reply.Status == IPStatus.Success)) {
 					first = false;
 					SaveReplay(indata.adress, reply);
 					prevStatus = reply.Status;
@@ -52,10 +47,6 @@ namespace Pingator {
 					Thread.Sleep(indata.timecycle - timeInWork);
 			}
 		} // ////////////////////////////////////////////////////////////////////////
-		public static void DoEvents() {
-			if (Application.Current != null)
-				Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
-		} // /////////////////////////////////////////////////////////////////////////////////////////
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		public void OnPropertyChanged([CallerMemberName]string prop = "") {
@@ -79,6 +70,7 @@ namespace Pingator {
 			else if (i == (bnd++)) Brush03 = brush;
 			else if (i == (bnd++)) Brush04 = brush;
 			else if (i == (bnd++)) Brush05 = brush;
+			else if (i == (bnd++)) Brush06 = brush;
 		} // ///////////////////////////////////////////////////////////////////////////////////////////
 		public Brush Brush00 {
 			get { return alllist[0].brush; }
@@ -102,7 +94,7 @@ namespace Pingator {
 		} // /-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 		public Brush Brush05 {
 			get { return alllist[5].brush; }
-			set { alllist[5].brush = value;  OnPropertyChanged("Brush05"); }
+			set { alllist[5].brush = value; OnPropertyChanged("Brush05"); }
 		} // /-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 		public Brush Brush06 {
 			get { return alllist[6].brush; }
@@ -155,6 +147,10 @@ namespace Pingator {
 					return Brushes.Red;
 			}
 		} // //////////////////////////////////////////////////////////////////////////////////
+		public static void DoEvents() {
+			if (Application.Current != null)
+				Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
+		} // /////////////////////////////////////////////////////////////////////////////////////////
 	} // -----------------------------------------------------------------------------
 }
 

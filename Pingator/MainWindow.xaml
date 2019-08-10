@@ -61,16 +61,33 @@
             <RectangleGeometry Rect="12,5,3,3"  RadiusX="0" RadiusY="0" />
         </GeometryCollection>
 
-        <GeometryCollection x:Key="GeometryEarth">
-            <EllipseGeometry Center="0,0" RadiusX="50" RadiusY="35" />
-            <EllipseGeometry Center="0,0" RadiusX="46" RadiusY="31" />
-        </GeometryCollection>
-
-        <GeometryCollection x:Key="GeometryEarthTst">
+         <GeometryCollection x:Key="GeometryEarthTst">
             <EllipseGeometry Center="0,0" RadiusX="50" RadiusY="35" />
 
             <EllipseGeometry Center="0,0" RadiusX="46" RadiusY="31" />
         </GeometryCollection>
+        <PathFigureCollection x:Key="PathFigureCollectionEarth">
+            <PathFigure StartPoint="-20,-20">
+                <ArcSegment Point="20,-20" Size="30,30"/>
+                <ArcSegment Point="-20,-20" Size="30,30"/>
+                <ArcSegment Point="-20,20" Size="30,30"/>
+                <ArcSegment Point="20,20" Size="30,30"/>
+                <ArcSegment Point="20,-20" Size="30,30"/>
+                <ArcSegment Point="-20,-20" Size="30,30"/>
+            </PathFigure>
+            <PathFigure StartPoint="20,20">
+                <ArcSegment Point="-20,20" Size="30,30"/>
+            </PathFigure>
+            <PathFigure IsClosed="False" StartPoint="-24,0">
+                <LineSegment Point="24,0" />
+            </PathFigure>
+            <PathFigure IsClosed="False" StartPoint="0,-24">
+                <LineSegment Point="0,24" />
+            </PathFigure>
+        </PathFigureCollection>
+        <TransformCollection x:Key="TransformCollectionEarth">
+            <ScaleTransform ScaleX="1.2"/>
+        </TransformCollection>
     </Window.Resources>
 
     <Grid ShowGridLines="True">
@@ -149,12 +166,17 @@
                 </Path.Data>
             </Path>
         </Canvas>
+
         <Canvas Grid.Row="5" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Path x:Name="Earth" Fill="{Binding Path=Brush05, UpdateSourceTrigger=PropertyChanged}">
+            <Path Stroke="{Binding Path=Brush05, UpdateSourceTrigger=PropertyChanged}" StrokeThickness="6" StrokeStartLineCap="Round" StrokeEndLineCap="Round" RenderTransformOrigin="0.5,0.5">
+                <Path.RenderTransform>
+                    <TransformGroup Children="{DynamicResource TransformCollectionEarth}"/>
+                </Path.RenderTransform>
                 <Path.Data>
-                    <GeometryGroup FillRule="Nonzero" Children="{DynamicResource GeometryEarth}"/>
+                    <PathGeometry Figures="{DynamicResource PathFigureCollectionEarth}"/>
                 </Path.Data>
             </Path>
         </Canvas>
+        
     </Grid>
 </Window>
