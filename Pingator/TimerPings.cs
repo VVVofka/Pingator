@@ -41,7 +41,7 @@ namespace Pingator {
 					prevStatus = reply.Status;
 				}
 				if (reply.Status == IPStatus.Success)
-					pingTimeSaver.Add(reply.RoundtripTime);
+					pingTimeSaver.Add(reply.RoundtripTime, reply.Status);
 				int timeInWork = (int)((DateTime.Now.Ticks - start) / 10000);
 				if (timeInWork < indata.timecycle)
 					Thread.Sleep(indata.timecycle - timeInWork);

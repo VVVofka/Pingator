@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net.NetworkInformation;
 
 namespace Pingator {
 	class PingTimeSaver {
@@ -7,14 +8,14 @@ namespace Pingator {
 		private DateTime prevdt = new DateTime(0);
 		private long sum = 0;
 		private int cnt = 0;
+		private bool success = false;
 		public PingTimeSaver(string adress) {
 			Fname = adress.Replace('.', '_') + @".csv";
 			SaveHeader(Fname, "DateTime;\tPing");
 			prevdt = DateTime.Now;
 		} // /////////////////////////////////////////////////////////////////
-		public void Add(long ms) {
+		public void Add(long ms, IPStatus status) {
 			DateTime now = DateTime.Now;
-
 			if ((cnt != 0) && (	// if new minute
 					now.Minute != prevdt.Minute || 
 					now.Hour != prevdt.Hour || 
@@ -23,14 +24,18 @@ namespace Pingator {
 					now.Year != prevdt.Year)
 					) {
 				long avg = sum / cnt;
-				string s = prevdt.ToString("yyyy-MM-dd hh:mm") + ";\t" + avg.ToString();
+				string s = prevdt.ToString("yyyy-MM-dd hh:mm") + 
+					";\t" + avg.ToString() + 
+					";\t" + success.ToString();
 				SaveLine(Fname, s);
 				cnt = 1;
 				sum = ms;
+				success = (status == IPStatus.Success);
 				prevdt = now;
 			} else {
 				cnt++;
 				sum += ms;
+				success = success && (status == IPStatus.Success);
 			}
 		} // /////////////////////////////////////////////////////////////////////////////////////
 		private void SaveHeader(string f_name, string s) {
