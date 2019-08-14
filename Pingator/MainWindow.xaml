@@ -141,7 +141,7 @@
         </Canvas>
 
         <Canvas Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Path x:Name="pcSecr" Fill="{Binding Path=Brush02, UpdateSourceTrigger=PropertyChanged}">
+            <Path x:Name="pcSecr" Stroke="{Binding Path=Brush02, UpdateSourceTrigger=PropertyChanged}">
                 <Path.Data>
                     <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometryRouter}"/>
                 </Path.Data>
@@ -162,7 +162,7 @@
         </Canvas>
 
         <Canvas Grid.Row="1" Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Path x:Name="pcResurs" Fill="{Binding Path=Brush04, UpdateSourceTrigger=PropertyChanged}" StrokeThickness="3" >
+            <Path x:Name="pcResurs" Stroke="{Binding Path=Brush04, UpdateSourceTrigger=PropertyChanged}" StrokeThickness="1" >
                 <Path.Data>
                     <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometryRouter}"/>
                 </Path.Data>

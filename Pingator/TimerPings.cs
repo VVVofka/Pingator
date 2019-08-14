@@ -104,8 +104,8 @@ namespace Pingator {
 			set { alllist[6].brush = value; OnPropertyChanged("Brush06"); }
 		} // /-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 		public Brush Brush07 {
-			get { return alllist[6].brush; }
-			set { alllist[6].brush = value; OnPropertyChanged("Brush06"); }
+			get { return alllist[7].brush; }
+			set { alllist[7].brush = value; OnPropertyChanged("Brush07"); }
 		} // /-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 		private void SaveHeader(string fname, string s) {
 			FileInfo fileInf = new FileInfo(ProtocolFileName);

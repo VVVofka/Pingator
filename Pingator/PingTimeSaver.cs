@@ -5,7 +5,6 @@ using System.Net.NetworkInformation;
 namespace Pingator {
 	class PingTimeSaver {
 		private readonly string Fname;
-		public string ConfigFileName = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory + @"\Data", @"config.txt");
 		private DateTime prevdt = new DateTime(0);
 		private long sum = 0;
 		private int cnt = 0;
