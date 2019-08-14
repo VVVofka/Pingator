@@ -9,11 +9,14 @@ namespace Pingator {
 		private long sum = 0;
 		private int cnt = 0;
 		private bool success = false;
+		private string separator = "/t";
 		public PingTimeSaver(string adress) {
 			string filename = adress.Replace('.', '_') + @".csv";
 			Fname = Path.Combine(AppDomain.CurrentDomain.BaseDirectory + @"\Data", 
 								filename);
-			SaveHeader(Fname, "DateTime;\tPing;\tSuccess");
+			SaveHeader(Fname, "DateTime" + separator + 
+							"Ping" + separator + 
+							"Success");
 			prevdt = DateTime.Now;
 		} // /////////////////////////////////////////////////////////////////
 		public void Add(long ms, IPStatus status) {
@@ -27,8 +30,8 @@ namespace Pingator {
 					) {
 				long avg = sum / cnt;
 				string s = prevdt.ToString("yyyy-MM-dd hh:mm") +
-					";\t" + avg.ToString() +
-					";\t" + success.ToString();
+					separator + avg.ToString() +
+					separator + success.ToString();
 				SaveLine(Fname, s);
 				cnt = 1;
 				sum = ms;

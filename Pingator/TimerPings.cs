@@ -16,8 +16,11 @@ namespace Pingator {
 	public partial class TimerPings : INotifyPropertyChanged {
 		public string ProtocolFileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory + @"\Data", @"protocol.csv");
 		private List<AdressIndex> alllist = new List<AdressIndex>();
+		private string separator = "/t";
 		public TimerPings(string f_name) {
-			SaveHeader(ProtocolFileName, "DateTime;\tAdress;\tStatus");
+			SaveHeader(ProtocolFileName, "DateTime" + separator + 
+										"Adress" + separator + 
+										"Status");
 
 			LoadFromFile(f_name);
 			List<Task> tasks = new List<Task>();
@@ -57,10 +60,10 @@ namespace Pingator {
 		} // /////////////////////////////////////////////////////////////////////////////////////////
 		private void SaveReplay(string adress, PingReply reply) {
 			// save status
-			string s = String.Format("{0};\t{1};\t{2}",
+			string s = String.Format("{0}{3}{1}{3}{2}",
 				DateTime.Now.ToString("s").Replace('T', ' '),
 				adress,
-				reply.Status);
+				reply.Status, separator);
 			//Console.WriteLine("~~" + s);
 			SaveLineM(ProtocolFileName, s);
 		} // /////////////////////////////////////////////////////////////////////////////////////////
