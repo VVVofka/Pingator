@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -12,12 +14,12 @@ using System.Windows.Threading;
 
 namespace Pingator {
 	public partial class TimerPings : INotifyPropertyChanged {
-		public string ProtocolFileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"protocol.csv");
-		List<AdressIndex> alllist;
-		public TimerPings(List<AdressIndex> list) {
+		public string ProtocolFileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory + @"\Data", @"protocol.csv");
+		private List<AdressIndex> alllist = new List<AdressIndex>();
+		public TimerPings(string f_name) {
 			SaveHeader(ProtocolFileName, "DateTime;\tAdress;\tStatus");
-			alllist = list;
 
+			LoadFromFile(f_name);
 			List<Task> tasks = new List<Task>();
 			foreach (AdressIndex ai in alllist) {
 				setBrush(ai.brush, ai.index); // color for non initializing items (magenta)
@@ -71,6 +73,7 @@ namespace Pingator {
 			else if (i == (bnd++)) Brush04 = brush;
 			else if (i == (bnd++)) Brush05 = brush;
 			else if (i == (bnd++)) Brush06 = brush;
+			else if (i == (bnd++)) Brush07 = brush;
 		} // ///////////////////////////////////////////////////////////////////////////////////////////
 		public Brush Brush00 {
 			get { return alllist[0].brush; }
@@ -97,6 +100,10 @@ namespace Pingator {
 			set { alllist[5].brush = value; OnPropertyChanged("Brush05"); }
 		} // /-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 		public Brush Brush06 {
+			get { return alllist[6].brush; }
+			set { alllist[6].brush = value; OnPropertyChanged("Brush06"); }
+		} // /-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+		public Brush Brush07 {
 			get { return alllist[6].brush; }
 			set { alllist[6].brush = value; OnPropertyChanged("Brush06"); }
 		} // /-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
@@ -151,6 +158,26 @@ namespace Pingator {
 			if (Application.Current != null)
 				Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
 		} // /////////////////////////////////////////////////////////////////////////////////////////
+		public void LoadFromFile(string f_name) {
+			int index = 0;
+			try {
+				using (StreamReader sr = new StreamReader(f_name, Encoding.Default)) {
+					while (sr.Peek() >= 0) {
+						string line = sr.ReadLine();
+						string[] words = line.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+						if (words.Count() == 3) {
+							int i = 0;
+							string adress = words[i++];
+							int timeout = Convert.ToInt32(words[i++]);
+							int period = Convert.ToInt32(words[i++]);
+							alllist.Add(new AdressIndex(adress, index++, timeout, period));
+						}
+					}
+				}
+			} catch (Exception e) {
+				Console.WriteLine(f_name + "->" + e.Message);
+			}
+		} // ////////////////////////////////////////////////////////////////////////////////////
 	} // -----------------------------------------------------------------------------
 }
 

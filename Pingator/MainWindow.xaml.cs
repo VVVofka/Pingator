@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
@@ -20,24 +21,13 @@ namespace Pingator {
 	/// Логика взаимодействия для MainWindow.xaml
 	/// </summary>
 	public partial class MainWindow : Window {
-		private List<AdressIndex> pingas = new List<AdressIndex>();
-
+		public string ConfigFileName = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory + @"\Data", @"config.txt");
 		public MainWindow() {
 			InitializeComponent();
-			PingSimplInit();
-			DataContext = new TimerPings(pingas);
+			DataContext = new TimerPings(ConfigFileName);
 		} // //////////////////////////////////////////////////////////////////////////////
 		private void Btn1_Click(object sender, RoutedEventArgs e) {
 			//Thread.Sleep(7000);
 		} // /////////////////////////////////////////////////////////////////////////////////
-		private void PingSimplInit() {
-			int index = 0;
-			pingas.Add(new AdressIndex("192.168.1.1", index++, 300, 1000));
-			pingas.Add(new AdressIndex("google.com", index++, 1000, 5000));
-			pingas.Add(new AdressIndex("192.168.1.100", index++, 300, 1000));
-			pingas.Add(new AdressIndex("192.168.1.122", index++, 300, 1000));
-			pingas.Add(new AdressIndex("192.168.1.123", index++, 300, 1000));
-			pingas.Add(new AdressIndex("www.microsoft.com", index++, 1100, 5100));
-		} // //////////////////////////////////////////////////////////////////////////////////
 	} // -------------------------------------------------------------------------------------
 }

@@ -5,27 +5,30 @@ using System.Net.NetworkInformation;
 namespace Pingator {
 	class PingTimeSaver {
 		private readonly string Fname;
+		public string ConfigFileName = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory + @"\Data", @"config.txt");
 		private DateTime prevdt = new DateTime(0);
 		private long sum = 0;
 		private int cnt = 0;
 		private bool success = false;
 		public PingTimeSaver(string adress) {
-			Fname = adress.Replace('.', '_') + @".csv";
-			SaveHeader(Fname, "DateTime;\tPing");
+			string filename = adress.Replace('.', '_') + @".csv";
+			Fname = Path.Combine(AppDomain.CurrentDomain.BaseDirectory + @"\Data", 
+								filename);
+			SaveHeader(Fname, "DateTime;\tPing;\tSuccess");
 			prevdt = DateTime.Now;
 		} // /////////////////////////////////////////////////////////////////
 		public void Add(long ms, IPStatus status) {
 			DateTime now = DateTime.Now;
-			if ((cnt != 0) && (	// if new minute
-					now.Minute != prevdt.Minute || 
-					now.Hour != prevdt.Hour || 
-					now.Day != prevdt.Day || 
-					now.Month != prevdt.Month || 
+			if ((cnt != 0) && ( // if new minute
+					now.Minute != prevdt.Minute ||
+					now.Hour != prevdt.Hour ||
+					now.Day != prevdt.Day ||
+					now.Month != prevdt.Month ||
 					now.Year != prevdt.Year)
 					) {
 				long avg = sum / cnt;
-				string s = prevdt.ToString("yyyy-MM-dd hh:mm") + 
-					";\t" + avg.ToString() + 
+				string s = prevdt.ToString("yyyy-MM-dd hh:mm") +
+					";\t" + avg.ToString() +
 					";\t" + success.ToString();
 				SaveLine(Fname, s);
 				cnt = 1;
