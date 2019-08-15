@@ -9,7 +9,7 @@ namespace Pingator {
 		private long sum = 0;
 		private int cnt = 0;
 		private bool success = false;
-		private string separator = "/t";
+		private const string separator = "\t";
 		public PingTimeSaver(string adress) {
 			string filename = adress.Replace('.', '_') + @".csv";
 			Fname = Path.Combine(AppDomain.CurrentDomain.BaseDirectory + @"\Data", 

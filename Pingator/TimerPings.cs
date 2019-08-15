@@ -16,7 +16,7 @@ namespace Pingator {
 	public partial class TimerPings : INotifyPropertyChanged {
 		public string ProtocolFileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory + @"\Data", @"protocol.csv");
 		private List<AdressIndex> alllist = new List<AdressIndex>();
-		private string separator = "/t";
+		private const string separator = "\t";
 		public TimerPings(string f_name) {
 			SaveHeader(ProtocolFileName, "DateTime" + separator + 
 										"Adress" + separator + 
