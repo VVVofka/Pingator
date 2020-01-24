@@ -26,8 +26,5 @@ namespace Pingator {
 			InitializeComponent();
 			DataContext = new TimerPings(ConfigFileName);
 		} // //////////////////////////////////////////////////////////////////////////////
-		private void Btn1_Click(object sender, RoutedEventArgs e) {
-			//Thread.Sleep(7000);
-		} // /////////////////////////////////////////////////////////////////////////////////
 	} // -------------------------------------------------------------------------------------
 }

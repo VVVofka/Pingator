@@ -61,7 +61,7 @@
             <RectangleGeometry Rect="12,5,3,3"  RadiusX="0" RadiusY="0" />
         </GeometryCollection>
 
-        <GeometryCollection x:Key="GeometryEarthTst">
+         <GeometryCollection x:Key="GeometryEarthTst">
             <EllipseGeometry Center="0,0" RadiusX="50" RadiusY="35" />
 
             <EllipseGeometry Center="0,0" RadiusX="46" RadiusY="31" />
@@ -100,25 +100,34 @@
             <RowDefinition Height="1*"></RowDefinition>
             <RowDefinition Height="0.05*"></RowDefinition>
             <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.1*"></ColumnDefinition>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="0.1*"></ColumnDefinition>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="0.1*"></ColumnDefinition>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
             <ColumnDefinition Width="0.1*"></ColumnDefinition>
             <ColumnDefinition Width="1*"></ColumnDefinition>
             <ColumnDefinition Width="0.1*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
         <Canvas Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Path Stroke="{Binding Path=Brush00, UpdateSourceTrigger=PropertyChanged}" StrokeThickness="6" StrokeStartLineCap="Round" StrokeEndLineCap="Round" RenderTransformOrigin="0.5,0.5">
-                <Path.RenderTransform>
-                    <TransformGroup Children="{DynamicResource TransformCollectionEarth}"/>
-                </Path.RenderTransform>
+            <Path x:Name="rtSecr" Fill="{Binding Path=Brush00, UpdateSourceTrigger=PropertyChanged}">
                 <Path.Data>
-                    <PathGeometry Figures="{DynamicResource PathFigureCollectionEarth}"/>
+                    <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometryRouter}"/>
+                </Path.Data>
+            </Path>
+            <Path Fill="{StaticResource greenLedStyle}">
+                <Path.Data>
+                    <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometryLEDs}"/>
                 </Path.Data>
             </Path>
         </Canvas>
-        
-        <Canvas Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+
+        <Canvas Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center">
             <Path x:Name="swSecr" Fill="{Binding Path=Brush01, UpdateSourceTrigger=PropertyChanged}">
                 <Path.Data>
                     <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometrySwitcher}"/>
@@ -131,16 +140,8 @@
             </Path>
         </Canvas>
 
-        <Canvas Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Path x:Name="pcDirect" Fill="{Binding Path=Brush02, UpdateSourceTrigger=PropertyChanged}">
-                <Path.Data>
-                    <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometryPC}"/>
-                </Path.Data>
-            </Path>
-        </Canvas>
-
-        <Canvas Grid.Row="7" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Path Fill="{Binding Path=Brush03, UpdateSourceTrigger=PropertyChanged}" StrokeThickness="1" >
+        <Canvas Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Path x:Name="pcSecr" Stroke="{Binding Path=Brush02, UpdateSourceTrigger=PropertyChanged}">
                 <Path.Data>
                     <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometryRouter}"/>
                 </Path.Data>
@@ -152,5 +153,67 @@
             </Path>
         </Canvas>
 
+        <Canvas Grid.Row="3" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Path x:Name="pcDirect" Fill="{Binding Path=Brush03, UpdateSourceTrigger=PropertyChanged}">
+                <Path.Data>
+                    <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometryPC}"/>
+                </Path.Data>
+            </Path>
+        </Canvas>
+
+        <Canvas Grid.Row="1" Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Path x:Name="pcResurs" Stroke="{Binding Path=Brush04, UpdateSourceTrigger=PropertyChanged}" StrokeThickness="1" >
+                <Path.Data>
+                    <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometryRouter}"/>
+                </Path.Data>
+            </Path>
+            <Path Fill="{StaticResource greenLedStyle}">
+                <Path.Data>
+                    <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometryLEDs}"/>
+                </Path.Data>
+            </Path>
+        </Canvas>
+
+
+        <Canvas Grid.Row="1" Grid.Column="7" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Path Fill="{Binding Path=Brush05, UpdateSourceTrigger=PropertyChanged}" StrokeThickness="1" >
+                <Path.Data>
+                    <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometryRouter}"/>
+                </Path.Data>
+            </Path>
+            <Path Fill="{StaticResource greenLedStyle}">
+                <Path.Data>
+                    <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometryLEDs}"/>
+                </Path.Data>
+            </Path>
+        </Canvas>
+
+        <Canvas Grid.Row="3" Grid.Column="5" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Path Fill="{Binding Path=Brush06, UpdateSourceTrigger=PropertyChanged}" StrokeThickness="1" >
+                <Path.Data>
+                    <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometryRouter}"/>
+                </Path.Data>
+            </Path>
+            <Path Fill="{StaticResource greenLedStyle}">
+                <Path.Data>
+                    <GeometryGroup FillRule="EvenOdd" Children="{DynamicResource GeometryLEDs}"/>
+                </Path.Data>
+            </Path>
+        </Canvas>
+
+        <Canvas Grid.Row="3" Grid.Column="7" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Path Stroke="{Binding Path=Brush07, UpdateSourceTrigger=PropertyChanged}" StrokeThickness="6" StrokeStartLineCap="Round" StrokeEndLineCap="Round" RenderTransformOrigin="0.5,0.5">
+                <Path.RenderTransform>
+                    <TransformGroup Children="{DynamicResource TransformCollectionEarth}"/>
+                </Path.RenderTransform>
+                <Path.Data>
+                    <PathGeometry Figures="{DynamicResource PathFigureCollectionEarth}"/>
+                </Path.Data>
+            </Path>
+        </Canvas>
+
+        <Canvas Grid.Row="4" Grid.Column="7">
+            <Button x:Name="btn1" Content="Button" Canvas.Left="5" VerticalAlignment="Center" HorizontalAlignment="Center" Width="129" Click="Btn1_Click"/>
+        </Canvas>
     </Grid>
 </Window>
